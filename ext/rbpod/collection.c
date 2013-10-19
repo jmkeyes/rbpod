@@ -95,7 +95,7 @@ void Init_rbpod_collection(void) {
     rb_define_method(cRbPodCollection, "initialize", rbpod_collection_initialize, 0);
 
     rb_define_method(cRbPodCollection, "each", rbpod_collection_each, 0);
-    rb_define_method(cRbPodCollection, "count", rbpod_collection_count, 1);
+    rb_define_method(cRbPodCollection, "count", rbpod_collection_count, 0);
 
     rb_define_method(cRbPodCollection, "first", rbpod_collection_first, 0);
     rb_define_method(cRbPodCollection, "last", rbpod_collection_last, 0);

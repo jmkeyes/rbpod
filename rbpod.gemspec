@@ -13,6 +13,7 @@ Gem::Specification.new do |spec|
   spec.summary       = %q{Ruby bindings to the libgpod library.}
   spec.description   = %q{Lightweight native bindings to the libgpod library.}
   spec.homepage      = "https://github.com/jmkeyes/rbpod"
+  spec.requirements << 'libgpod-1.0'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files`.split($/)

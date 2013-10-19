@@ -57,7 +57,7 @@ static VALUE rbpod_device_generation_get(VALUE self) {
 static VALUE rbpod_device_capacity_get(VALUE self) {
     Itdb_Device *device = rbpod_device_unwrap(self);
     const Itdb_IpodInfo *info = itdb_device_get_ipod_info(device);
-    return rb_float_new(info->capacity);
+    return DBL2NUM(info->capacity);
 }
 
 static VALUE rbpod_device_sysinfo_get(VALUE self, VALUE key) {

@@ -70,12 +70,12 @@ static void rbpod_collection_deallocate(void *handle) {
     if (collection->list != NULL)
         g_list_free(collection->list);
 
-    free(handle);
+    xfree(handle);
     return;
 }
 
 inline VALUE rbpod_collection_wrap(GList *list, VALUE type, gboolean freeable) {
-    struct collection *collection = malloc(sizeof *collection);
+    struct collection *collection = ALLOC(struct collection);
     collection->list  = list;
     collection->klass = type;
     return Data_Wrap_Struct(cRbPodCollection, NULL, freeable ? rbpod_collection_deallocate : NULL, (void *) collection);

@@ -78,12 +78,12 @@ static VALUE rbpod_database_mountpoint_set(VALUE self, VALUE path) {
 static void rbpod_database_deallocate(void *handle) {
     Itdb_iTunesDB **database = (Itdb_iTunesDB **) handle;
     itdb_free(*database);
-    free(handle);
+    xfree(handle);
     return;
 }
 
 static VALUE rbpod_database_create(VALUE self, VALUE device_name, VALUE mount_point, VALUE model_number) {
-    Itdb_iTunesDB **database = malloc(sizeof *database);
+    Itdb_iTunesDB **database = ALLOC(Itdb_iTunesDB *);
     gchar *_mount_point, *_model_number, *_device_name;
 
     _device_name  = StringValueCStr(device_name);
@@ -138,7 +138,7 @@ inline VALUE rbpod_database_wrap(Itdb_iTunesDB **database, gboolean freeable) {
 }
 
 static VALUE rbpod_database_allocate(VALUE self) {
-    Itdb_iTunesDB **database = malloc(sizeof *database);
+    Itdb_iTunesDB **database = ALLOC(Itdb_iTunesDB *);
 
     /* Initialize a new, empty database. */
     *database = itdb_new();

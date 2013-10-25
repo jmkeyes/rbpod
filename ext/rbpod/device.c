@@ -38,13 +38,13 @@ static VALUE rbpod_device_has_photo_support(VALUE self) {
 
 static VALUE rbpod_device_model_name_get(VALUE self) {
     Itdb_Device *device = rbpod_device_unwrap(self);
-    Itdb_IpodInfo *info = itdb_device_get_ipod_info(device);
+    const Itdb_IpodInfo *info = itdb_device_get_ipod_info(device);
     return rb_str_new2(itdb_info_get_ipod_model_name_string(info->ipod_model));
 }
 
 static VALUE rbpod_device_model_number_get(VALUE self) {
     Itdb_Device *device = rbpod_device_unwrap(self);
-    Itdb_IpodInfo *info = itdb_device_get_ipod_info(device);
+    const Itdb_IpodInfo *info = itdb_device_get_ipod_info(device);
     return rb_str_new2(info->model_number);
 }
 
@@ -82,7 +82,7 @@ static VALUE rbpod_device_sysinfo_set(VALUE self, VALUE key, VALUE value) {
 
     itdb_device_set_sysinfo(device, _key, _value);
 
-    return rbpod_device_sysinfo_get(self, _key);
+    return rbpod_device_sysinfo_get(self, key);
 }
 
 static VALUE rbpod_device_sysinfo_write(VALUE self) {

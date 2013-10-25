@@ -3,6 +3,7 @@
 #include "rbpod.h"
 #include "track.h"
 #include "playlist.h"
+#include "collection.h"
 
 VALUE cRbPodPlaylist;
 

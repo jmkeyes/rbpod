@@ -96,7 +96,7 @@ static VALUE rbpod_database_create(VALUE self, VALUE device_name, VALUE mount_po
     /* TODO: Improve error handling. */
     if (itdb_init_ipod(_mount_point, _model_number, _device_name, NULL) == FALSE) {
         free(database);
-        rb_raise(rb_eRuntimeError, "Unable to format this iPod.");
+        rb_raise(eRbPodError, "Unable to format this iPod.");
         return Qfalse;
     }
 
@@ -106,7 +106,7 @@ static VALUE rbpod_database_create(VALUE self, VALUE device_name, VALUE mount_po
 
     if (*database == NULL) {
         free(database);
-        rb_raise(rb_eRuntimeError, "Not an iPod mount point.");
+        rb_raise(eRbPodError, "Not an iPod mount point.");
         return Qnil;
     }
 
@@ -126,7 +126,7 @@ static VALUE rbpod_database_initialize(VALUE self, VALUE mount_point) {
 
     /* The given mount point was not an iPod mount point. */
     if (*database == NULL) {
-        rb_raise(rb_eRuntimeError, "Not an iPod mount point.");
+        rb_raise(eRbPodError, "This is not an iPod mount point.");
         return Qnil;
     }
 

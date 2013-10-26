@@ -9,5 +9,6 @@
 #define BooleanValue(value) (value) ? Qtrue : Qfalse
 
 extern VALUE mRbPod;
+extern VALUE eRbPodError;
 
 #endif /* RBPOD_H */

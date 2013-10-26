@@ -6,49 +6,56 @@
 #include "collection.h"
 
 VALUE cRbPodPlaylist;
-
-static inline Itdb_Playlist *rbpod_playlist_unwrap(VALUE self) {
-    Itdb_Playlist *playlist = NULL;
-    Data_Get_Struct(self, Itdb_Playlist, playlist);
-    return playlist;
-}
+VALUE mRbPodPlaylistCollection;
 
 static VALUE rbpod_playlist_is_podcast(VALUE self) {
-    Itdb_Playlist *playlist = rbpod_playlist_unwrap(self);
+    Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
     return BooleanValue(itdb_playlist_is_podcasts(playlist));
 }
 
 static VALUE rbpod_playlist_is_master(VALUE self) {
-    Itdb_Playlist *playlist = rbpod_playlist_unwrap(self);
+    Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
     return BooleanValue(itdb_playlist_is_mpl(playlist));
 }
 
 static VALUE rbpod_playlist_is_smart(VALUE self) {
-    Itdb_Playlist *playlist = rbpod_playlist_unwrap(self);
+    Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
     return BooleanValue(playlist->is_spl);
 }
 
+static VALUE rbpod_playlist_timestamp_get(VALUE self) {
+    Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
+    return rb_funcall(rb_cTime, rb_intern("at"), 1, INT2NUM(playlist->timestamp));
+}
+
+static VALUE rbpod_playlist_shuffle(VALUE self) {
+    Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
+    itdb_playlist_randomize(playlist);
+    return Qnil;
+}
+
 static VALUE rbpod_playlist_tracks_get(VALUE self) {
-    Itdb_Playlist *playlist = rbpod_playlist_unwrap(self);
-    return rbpod_collection_wrap(playlist->members, cRbPodTrack, FALSE);
+    Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
+    return rbpod_collection_create(playlist->members, cRbPodTrack);
 }
 
 static VALUE rbpod_playlist_length_get(VALUE self) {
-    Itdb_Playlist *playlist = rbpod_playlist_unwrap(self);
-    return INT2NUM(playlist->num);
+    Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
+    return INT2NUM(itdb_playlist_tracks_number(playlist));
 }
 
 static VALUE rbpod_playlist_name_get(VALUE self) {
-    Itdb_Playlist *playlist = rbpod_playlist_unwrap(self);
+    Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
     return rb_str_new2(playlist->name);
 }
 
 static VALUE rbpod_playlist_id_get(VALUE self) {
-    Itdb_Playlist *playlist = rbpod_playlist_unwrap(self);
-    return INT2FIX(playlist->id);
+    Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
+    return INT2NUM(playlist->id);
 }
 
 static VALUE rbpod_playlist_initialize(VALUE self) {
+    /* Nothing to intiialize, yet. */
     return self;
 }
 
@@ -56,13 +63,9 @@ static void rbpod_playlist_deallocate(void *handle) {
     itdb_playlist_free((Itdb_Playlist *) handle);
 }
 
-inline VALUE rbpod_playlist_wrap(Itdb_Playlist *playlist, gboolean freeable) {
-    return Data_Wrap_Struct(cRbPodPlaylist, NULL, freeable ? rbpod_playlist_deallocate : NULL, (void *) playlist);
-}
-
 static VALUE rbpod_playlist_allocate(VALUE self) {
     Itdb_Playlist *playlist = itdb_playlist_new("Untitled Playlist", FALSE);
-    return rbpod_playlist_wrap(playlist, TRUE);
+    return Data_Wrap_Struct(cRbPodPlaylist, NULL, rbpod_playlist_deallocate, (void *) playlist);
 }
 
 void Init_rbpod_playlist(void) {
@@ -76,10 +79,14 @@ void Init_rbpod_playlist(void) {
     rb_define_method(cRbPodPlaylist, "name", rbpod_playlist_name_get, 0);
     rb_define_method(cRbPodPlaylist, "length", rbpod_playlist_length_get, 0);
     rb_define_method(cRbPodPlaylist, "tracks", rbpod_playlist_tracks_get, 0);
+    rb_define_method(cRbPodPlaylist, "shuffle!", rbpod_playlist_shuffle, 0);
+    rb_define_method(cRbPodPlaylist, "created_on", rbpod_playlist_timestamp_get, 0);
 
     rb_define_method(cRbPodPlaylist, "smart_playlist?", rbpod_playlist_is_smart, 0);
     rb_define_method(cRbPodPlaylist, "master_playlist?", rbpod_playlist_is_master, 0);
     rb_define_method(cRbPodPlaylist, "podcast_playlist?", rbpod_playlist_is_podcast, 0);
+
+    mRbPodPlaylistCollection = rb_define_module_under(cRbPodPlaylist, "Collection");
 
     return;
 }

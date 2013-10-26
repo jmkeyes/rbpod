@@ -4,9 +4,8 @@
 #define RBPOD_PLAYLIST_H
 
 extern VALUE cRbPodPlaylist;
+extern VALUE mRbPodPlaylistCollection;
 
 void Init_rbpod_playlist(void);
-
-inline VALUE rbpod_playlist_wrap(Itdb_Playlist *playlist, gboolean freeable);
 
 #endif /* RBPOD_PLAYLIST_H */

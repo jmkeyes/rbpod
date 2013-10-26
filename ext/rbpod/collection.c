@@ -7,14 +7,15 @@ VALUE cRbPodCollection;
 
 struct collection { VALUE klass; GList *list; };
 
-static inline struct collection *rbpod_collection_unwrap(VALUE self) {
-    struct collection *collection = NULL;
-    Data_Get_Struct(self, struct collection, collection);
-    return collection;
+inline VALUE rbpod_collection_create(GList *list, VALUE type) {
+    struct collection *collection = ALLOC(struct collection);
+    collection->list  = list;
+    collection->klass = type;
+    return Data_Wrap_Struct(cRbPodCollection, NULL, NULL, (void *) collection);
 }
 
 static VALUE rbpod_collection_get(VALUE self, VALUE key) {
-    struct collection *collection = rbpod_collection_unwrap(self);
+    struct collection *collection = TYPED_DATA_PTR(self, struct collection);
     GList *current = NULL;
 
     if (FIXNUM_P(key) == FALSE)
@@ -22,28 +23,28 @@ static VALUE rbpod_collection_get(VALUE self, VALUE key) {
 
     current = g_list_nth(collection->list, FIX2INT(key));
 
-    return Data_Wrap_Struct(collection->klass, NULL, NULL, (void *) current->data);;
+    return Data_Wrap_Struct(collection->klass, NULL, NULL, (void *) current->data);
 }
 
 static VALUE rbpod_collection_last(VALUE self) {
-    struct collection *collection = rbpod_collection_unwrap(self);
+    struct collection *collection = TYPED_DATA_PTR(self, struct collection);
     GList *current = g_list_last(collection->list);
     return Data_Wrap_Struct(collection->klass, NULL, NULL, (void *) current->data);
 }
 
 static VALUE rbpod_collection_first(VALUE self) {
-    struct collection *collection = rbpod_collection_unwrap(self);
+    struct collection *collection = TYPED_DATA_PTR(self, struct collection);
     GList *current = g_list_first(collection->list);
     return Data_Wrap_Struct(collection->klass, NULL, NULL, (void *) current->data);
 }
 
 static VALUE rbpod_collection_length(VALUE self) {
-    struct collection *collection = rbpod_collection_unwrap(self);
+    struct collection *collection = TYPED_DATA_PTR(self, struct collection);
     return INT2NUM(g_list_length(collection->list));
 }
 
 static VALUE rbpod_collection_each(VALUE self) {
-    struct collection *collection = rbpod_collection_unwrap(self);
+    struct collection *collection = TYPED_DATA_PTR(self, struct collection);
     GList *current = NULL;
     VALUE item;
 
@@ -55,6 +56,7 @@ static VALUE rbpod_collection_each(VALUE self) {
         item = Data_Wrap_Struct(collection->klass, NULL, NULL, (void *) current->data);
         rb_yield(item);
     }
+
     return Qnil;
 }
 
@@ -72,15 +74,11 @@ static void rbpod_collection_deallocate(void *handle) {
     return;
 }
 
-inline VALUE rbpod_collection_wrap(GList *list, VALUE type, gboolean freeable) {
-    struct collection *collection = ALLOC(struct collection);
-    collection->list  = list;
-    collection->klass = type;
-    return Data_Wrap_Struct(cRbPodCollection, NULL, freeable ? rbpod_collection_deallocate : NULL, (void *) collection);
-}
-
 static VALUE rbpod_collection_allocate(VALUE self) {
-    return rbpod_collection_wrap(g_list_alloc(), Qnil, TRUE);
+    struct collection *collection = ALLOC(struct collection);
+    collection->list = NULL;
+    collection->klass = Qnil;
+    return Data_Wrap_Struct(cRbPodCollection, NULL, rbpod_collection_deallocate, (void *) collection);
 }
 
 void Init_rbpod_collection(void) {

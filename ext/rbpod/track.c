@@ -4,45 +4,40 @@
 #include "track.h"
 
 VALUE cRbPodTrack;
-
-static inline Itdb_Track *rbpod_track_unwrap(VALUE self) {
-    Itdb_Track *track = NULL;
-    Data_Get_Struct(self, Itdb_Track, track);
-    return track;
-}
+VALUE mRbPodTrackCollection;
 
 static VALUE rbpod_track_is_transferred(VALUE self) {
-    Itdb_Track *track = rbpod_track_unwrap(self);
+    Itdb_Track *track = TYPED_DATA_PTR(self, Itdb_Track);
     return BooleanValue(track->transferred);
 }
 
 static VALUE rbpod_track_ipod_path_get(VALUE self) {
-    Itdb_Track *track = rbpod_track_unwrap(self);
+    Itdb_Track *track = TYPED_DATA_PTR(self, Itdb_Track);
     return rb_str_new2(track->ipod_path);
 }
 
 static VALUE rbpod_track_file_type_get(VALUE self) {
-    Itdb_Track *track = rbpod_track_unwrap(self);
+    Itdb_Track *track = TYPED_DATA_PTR(self, Itdb_Track);
     return rb_str_new2(track->filetype);
 }
 
 static VALUE rbpod_track_artist_get(VALUE self) {
-    Itdb_Track *track = rbpod_track_unwrap(self);
+    Itdb_Track *track = TYPED_DATA_PTR(self, Itdb_Track);
     return rb_str_new2(track->artist);
 }
 
 static VALUE rbpod_track_album_get(VALUE self) {
-    Itdb_Track *track = rbpod_track_unwrap(self);
+    Itdb_Track *track = TYPED_DATA_PTR(self, Itdb_Track);
     return rb_str_new2(track->album);
 }
 
 static VALUE rbpod_track_title_get(VALUE self) {
-    Itdb_Track *track = rbpod_track_unwrap(self);
+    Itdb_Track *track = TYPED_DATA_PTR(self, Itdb_Track);
     return rb_str_new2(track->title);
 }
 
 static VALUE rbpod_track_id_get(VALUE self) {
-    Itdb_Track *track = rbpod_track_unwrap(self);
+    Itdb_Track *track = TYPED_DATA_PTR(self, Itdb_Track);
     return rb_str_new2(track->filetype);
 }
 
@@ -55,12 +50,9 @@ static void rbpod_track_deallocate(void *handle) {
     return;
 }
 
-inline VALUE rbpod_track_wrap(Itdb_Track *track, gboolean freeable) {
-    return Data_Wrap_Struct(cRbPodTrack, NULL, freeable ? rbpod_track_deallocate : NULL, (void *) track);
-}
-
 static VALUE rbpod_track_allocate(VALUE self) {
-    return rbpod_track_wrap(itdb_track_new(), TRUE);
+    Itdb_Track *track = itdb_track_new();
+    return Data_Wrap_Struct(cRbPodTrack, NULL, rbpod_track_deallocate, (void *) track);
 }
 
 void Init_rbpod_track(void) {
@@ -78,6 +70,8 @@ void Init_rbpod_track(void) {
     rb_define_method(cRbPodTrack, "ipod_path", rbpod_track_ipod_path_get, 0);
 
     rb_define_method(cRbPodTrack, "transferred?", rbpod_track_is_transferred, 0);
+
+    mRbPodTrackCollection = rb_define_module_under(cRbPodTrack, "Collection");
 
     return;
 }

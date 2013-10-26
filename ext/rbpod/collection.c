@@ -37,7 +37,7 @@ static VALUE rbpod_collection_first(VALUE self) {
     return Data_Wrap_Struct(collection->klass, NULL, NULL, (void *) current->data);
 }
 
-static VALUE rbpod_collection_count(VALUE self) {
+static VALUE rbpod_collection_length(VALUE self) {
     struct collection *collection = rbpod_collection_unwrap(self);
     return INT2NUM(g_list_length(collection->list));
 }
@@ -93,7 +93,10 @@ void Init_rbpod_collection(void) {
     rb_define_method(cRbPodCollection, "initialize", rbpod_collection_initialize, 0);
 
     rb_define_method(cRbPodCollection, "each", rbpod_collection_each, 0);
-    rb_define_method(cRbPodCollection, "count", rbpod_collection_count, 0);
+
+    rb_define_method(cRbPodCollection, "length", rbpod_collection_length, 0);
+
+    rb_define_alias(cRbPodCollection,  "size", "length");
 
     rb_define_method(cRbPodCollection, "first", rbpod_collection_first, 0);
     rb_define_method(cRbPodCollection, "last", rbpod_collection_last, 0);

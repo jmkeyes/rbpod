@@ -54,7 +54,7 @@ Functional for most read-only purposes.
     database.playlists.map(&:name) # => ["iPod", "Podcasts", "Recently Added"]
 
     # Track Listing (also enumerable)
-    database.tracks.count        # => 400
+    database.tracks.length       # => 400
     database.tracks.first.artist # => "Steppenwolf"
     database.tracks.first.title  # => "Born To Be Wild"
 

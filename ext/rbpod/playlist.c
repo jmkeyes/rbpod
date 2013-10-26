@@ -12,6 +12,28 @@ static VALUE rbpod_playlist_collection_parent(VALUE self) {
     return rb_iv_get(self, "@parent");
 }
 
+static VALUE rbpod_playlist_collection_get(VALUE self, VALUE key) {
+    VALUE parent = rbpod_playlist_collection_parent(self);
+    Itdb_iTunesDB *database = TYPED_DATA_PTR(parent, Itdb_iTunesDB);
+    Itdb_Playlist *playlist = NULL;
+
+    switch (TYPE(key)) {
+    case T_SYMBOL: /* Convert symbol to string and fall through. */
+        key = rb_funcall(key, rb_intern("to_s"), 0);
+    case T_STRING: /* String index; lookup by name. */
+        playlist = itdb_playlist_by_name(database, StringValueCStr(key));
+        break;
+    case T_FIXNUM: /* Integer index; lookup by position. */
+        playlist = itdb_playlist_by_nr(database, FIX2INT(key));
+        break;
+    }
+
+    if (playlist == NULL)
+       return Qnil;
+
+    return Data_Wrap_Struct(cRbPodPlaylist, NULL, NULL, (void *) playlist);
+}
+
 static VALUE rbpod_playlist_collection_podcasts_get(VALUE self) {
     VALUE parent = rbpod_playlist_collection_parent(self);
     Itdb_iTunesDB *database = TYPED_DATA_PTR(parent, Itdb_iTunesDB);
@@ -130,6 +152,9 @@ void Init_rbpod_playlist(void) {
     /* iPod-specific methods. */
     rb_define_method(mRbPodPlaylistCollection, "master", rbpod_playlist_collection_master_get, 0);
     rb_define_method(mRbPodPlaylistCollection, "podcasts", rbpod_playlist_collection_podcasts_get, 0);
+
+    /* Array operations. */
+    rb_define_method(mRbPodPlaylistCollection, "[]", rbpod_playlist_collection_get, 1);
 
     return;
 }

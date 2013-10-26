@@ -28,7 +28,10 @@ static VALUE rbpod_database_playlists_get(VALUE self) {
 
 static VALUE rbpod_database_tracks_get(VALUE self) {
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
-    return rbpod_track_collection_create(self, database->tracks);
+    Itdb_Playlist *playlist = itdb_playlist_mpl(database);
+    /* Use the master playlist as the parent for the master track list. */
+    VALUE parent = Data_Wrap_Struct(cRbPodPlaylist, NULL, NULL, (void *) playlist);
+    return rbpod_track_collection_create(parent, database->tracks);
 }
 
 static VALUE rbpod_database_device_get(VALUE self) {

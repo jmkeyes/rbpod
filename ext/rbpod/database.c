@@ -23,16 +23,12 @@ static VALUE rbpod_database_is_synchronized(VALUE self) {
 
 static VALUE rbpod_database_playlists_get(VALUE self) {
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
-    VALUE collection = rbpod_collection_create(database->playlists, cRbPodPlaylist);
-    rb_extend_object(collection, mRbPodPlaylistCollection);
-    return collection;
+    return rbpod_playlist_collection_create(self, database->playlists);
 }
 
 static VALUE rbpod_database_tracks_get(VALUE self) {
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
-    VALUE collection = rbpod_collection_create(database->tracks, cRbPodTrack);
-    rb_extend_object(collection, mRbPodTrackCollection);
-    return collection;
+    return rbpod_track_collection_create(self, database->tracks);
 }
 
 static VALUE rbpod_database_device_get(VALUE self) {

@@ -2,9 +2,17 @@
 
 #include "rbpod.h"
 #include "track.h"
+#include "collection.h"
 
 VALUE cRbPodTrack;
 VALUE mRbPodTrackCollection;
+
+inline VALUE rbpod_track_collection_create(VALUE parent, GList *items) {
+    VALUE collection = rbpod_collection_create(items, cRbPodTrack);
+    rb_extend_object(collection, mRbPodTrackCollection);
+    rb_iv_set(collection, "@parent", parent);
+    return collection;
+}
 
 static VALUE rbpod_track_is_transferred(VALUE self) {
     Itdb_Track *track = TYPED_DATA_PTR(self, Itdb_Track);

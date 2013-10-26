@@ -8,6 +8,13 @@
 VALUE cRbPodPlaylist;
 VALUE mRbPodPlaylistCollection;
 
+inline VALUE rbpod_playlist_collection_create(VALUE parent, GList *items) {
+    VALUE collection = rbpod_collection_create(items, cRbPodPlaylist);
+    rb_extend_object(collection, mRbPodPlaylistCollection);
+    rb_iv_set(collection, "@parent", parent);
+    return collection;
+}
+
 static VALUE rbpod_playlist_is_podcast(VALUE self) {
     Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
     return BooleanValue(itdb_playlist_is_podcasts(playlist));
@@ -36,7 +43,7 @@ static VALUE rbpod_playlist_shuffle(VALUE self) {
 
 static VALUE rbpod_playlist_tracks_get(VALUE self) {
     Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
-    return rbpod_collection_create(playlist->members, cRbPodTrack);
+    return rbpod_track_collection_create(self, playlist->members);
 }
 
 static VALUE rbpod_playlist_length_get(VALUE self) {

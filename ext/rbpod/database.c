@@ -106,6 +106,7 @@ static VALUE rbpod_database_create(VALUE self, VALUE device_name, VALUE mount_po
 
 static VALUE rbpod_database_initialize(VALUE self, VALUE mount_point) {
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
+    Itdb_iTunesDB *previous = database;
     GError *error = NULL;
 
     /* Try to parse the database from the given mount point. */
@@ -116,7 +117,11 @@ static VALUE rbpod_database_initialize(VALUE self, VALUE mount_point) {
         return rbpod_raise_error(error);
     }
 
+    /* Overwrite our old database with the new one. */
     DATA_PTR(self) = database;
+
+    /* Free the old one. */
+    itdb_free(previous);
 
     return self;
 }

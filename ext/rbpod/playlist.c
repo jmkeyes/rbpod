@@ -66,8 +66,19 @@ static VALUE rbpod_playlist_id_get(VALUE self) {
     return INT2NUM(playlist->id);
 }
 
-static VALUE rbpod_playlist_initialize(VALUE self) {
-    /* Nothing to intiialize, yet. */
+static VALUE rbpod_playlist_initialize(VALUE self, VALUE playlist_name, VALUE smart_playlist) {
+    Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
+    gchar *_playlist_name = StringValueCStr(playlist_name);
+
+    /* Kill off the dummy playlist. */
+    itdb_playlist_free(playlist);
+
+    /* Create a new playlist based on the values provided. */
+    playlist = itdb_playlist_new(_playlist_name, (smart_playlist == Qtrue) ? TRUE : FALSE);
+
+    /* Store the new playlist. */
+    DATA_PTR(self) = playlist;
+
     return self;
 }
 
@@ -76,7 +87,7 @@ static void rbpod_playlist_deallocate(void *handle) {
 }
 
 static VALUE rbpod_playlist_allocate(VALUE self) {
-    Itdb_Playlist *playlist = itdb_playlist_new("Untitled Playlist", FALSE);
+    Itdb_Playlist *playlist = itdb_playlist_new("KILROY WAS HERE", FALSE);
     return Data_Wrap_Struct(cRbPodPlaylist, NULL, rbpod_playlist_deallocate, (void *) playlist);
 }
 
@@ -85,7 +96,7 @@ void Init_rbpod_playlist(void) {
 
     rb_define_alloc_func(cRbPodPlaylist, rbpod_playlist_allocate);
 
-    rb_define_method(cRbPodPlaylist, "initialize", rbpod_playlist_initialize, 0);
+    rb_define_method(cRbPodPlaylist, "initialize", rbpod_playlist_initialize, 2);
 
     rb_define_method(cRbPodPlaylist, "id", rbpod_playlist_id_get, 0);
     rb_define_method(cRbPodPlaylist, "name", rbpod_playlist_name_get, 0);

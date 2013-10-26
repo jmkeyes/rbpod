@@ -10,7 +10,7 @@
 
 #define TYPED_DATA_PTR(self, type) ((type *) DATA_PTR(self))
 
-extern VALUE mRbPod;
-extern VALUE eRbPodError;
+RUBY_EXTERN VALUE mRbPod;
+RUBY_EXTERN VALUE eRbPodError;
 
 #endif /* RBPOD_H */

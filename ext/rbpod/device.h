@@ -3,7 +3,7 @@
 #ifndef RBPOD_DEVICE_H
 #define RBPOD_DEVICE_H
 
-extern VALUE cRbPodDevice;
+RUBY_EXTERN VALUE cRbPodDevice;
 
 void Init_rbpod_device(void);
 

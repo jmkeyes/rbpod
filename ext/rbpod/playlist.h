@@ -3,8 +3,8 @@
 #ifndef RBPOD_PLAYLIST_H
 #define RBPOD_PLAYLIST_H
 
-extern VALUE cRbPodPlaylist;
-extern VALUE mRbPodPlaylistCollection;
+RUBY_EXTERN VALUE cRbPodPlaylist;
+RUBY_EXTERN VALUE mRbPodPlaylistCollection;
 
 void Init_rbpod_playlist(void);
 

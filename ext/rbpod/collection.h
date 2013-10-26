@@ -3,7 +3,7 @@
 #ifndef RBPOD_COLLECTION_H
 #define RBPOD_COLLECTION_H
 
-extern VALUE cRbPodCollection;
+RUBY_EXTERN VALUE cRbPodCollection;
 
 void Init_rbpod_collection(void);
 

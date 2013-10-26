@@ -14,6 +14,7 @@ static VALUE rbpod_track_collection_parent(VALUE self) {
 inline VALUE rbpod_track_collection_create(VALUE parent, GList *items) {
     VALUE collection = rbpod_collection_create(items, cRbPodTrack);
     rb_extend_object(collection, mRbPodTrackCollection);
+    rb_extend_object(collection, rb_mComparable);
     rb_iv_set(collection, "@parent", parent);
     return collection;
 }

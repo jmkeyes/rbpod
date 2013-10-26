@@ -10,6 +10,18 @@
 VALUE mRbPod;
 VALUE eRbPodError;
 
+inline VALUE rbpod_raise_error(GError *error) {
+    VALUE error_message;
+
+    if (error != NULL) {
+        error_message = rb_str_new2(error->message);
+        g_error_free(error);
+        rb_raise(eRbPodError, "%s", StringValueCStr(error_message));
+    }
+
+    return Qnil;
+}
+
 void Init_rbpod(void) {
     /* Set up the top-level RbPod module. */
     mRbPod = rb_define_module("RbPod");

@@ -90,8 +90,13 @@ static VALUE rbpod_device_sysinfo_set(VALUE self, VALUE key, VALUE value) {
 
 static VALUE rbpod_device_sysinfo_write(VALUE self) {
     Itdb_Device *device = TYPED_DATA_PTR(self, Itdb_Device);
-    /* TODO: Improve error handling. */
-    return BooleanValue(itdb_device_write_sysinfo(device, NULL));
+    GError *error = NULL;
+
+    if (itdb_device_write_sysinfo(device, &error) == FALSE) {
+        return rbpod_raise_error(error);
+    }
+
+    return self;
 }
 
 static VALUE rbpod_device_initialize(VALUE self) {

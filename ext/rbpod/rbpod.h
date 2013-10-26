@@ -13,4 +13,6 @@
 RUBY_EXTERN VALUE mRbPod;
 RUBY_EXTERN VALUE eRbPodError;
 
+inline VALUE rbpod_raise_error(GError *error);
+
 #endif /* RBPOD_H */

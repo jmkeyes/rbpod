@@ -11,8 +11,13 @@ VALUE cRbPodDatabase;
 
 static VALUE rbpod_database_write(VALUE self) {
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
-    gboolean success = itdb_write(database, NULL); /* TODO: Improve error handling. */
-    return BooleanValue(success);
+    GError *error = NULL;
+
+    if (itdb_write(database, &error) == FALSE) {
+        return rbpod_raise_error(error);
+    }
+
+    return self;
 }
 
 static VALUE rbpod_database_is_synchronized(VALUE self) {
@@ -73,6 +78,7 @@ static void rbpod_database_deallocate(void *handle) {
 static VALUE rbpod_database_create(VALUE self, VALUE device_name, VALUE mount_point, VALUE model_number) {
     gchar *_mount_point, *_model_number, *_device_name;
     Itdb_iTunesDB *database = NULL;
+    GError *error = NULL;
 
     _device_name  = StringValueCStr(device_name);
     _mount_point  = StringValueCStr(mount_point);
@@ -81,19 +87,17 @@ static VALUE rbpod_database_create(VALUE self, VALUE device_name, VALUE mount_po
     _model_number = !NIL_P(model_number) ? StringValueCStr(model_number) : NULL;
 
     /* Initialize the iPod at this mount point, with this device name and model number. */
-    /* TODO: Improve error handling. */
-    if (itdb_init_ipod(_mount_point, _model_number, _device_name, NULL) == FALSE) {
-        rb_raise(eRbPodError, "Unable to format this iPod.");
-        return Qfalse;
+    if (itdb_init_ipod(_mount_point, _model_number, _device_name, &error) == FALSE) {
+        return rbpod_raise_error(error);
+    } else {
+        error = NULL;
     }
 
     /* Parse the newly created database. */
-    /* TODO: Improve error handling. */
-    database = itdb_parse(_mount_point, NULL);
+    database = itdb_parse(_mount_point, &error);
 
     if (database == NULL) {
-        rb_raise(eRbPodError, "Not an iPod mount point.");
-        return Qnil;
+        return rbpod_raise_error(error);
     }
 
     /* Return an instance of this class using the newly created database. */
@@ -102,15 +106,14 @@ static VALUE rbpod_database_create(VALUE self, VALUE device_name, VALUE mount_po
 
 static VALUE rbpod_database_initialize(VALUE self, VALUE mount_point) {
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
+    GError *error = NULL;
 
     /* Try to parse the database from the given mount point. */
-    /* TODO: Improve error handling. */
-    database = itdb_parse(StringValueCStr(mount_point), NULL);
+    database = itdb_parse(StringValueCStr(mount_point), &error);
 
     /* The given mount point was not an iPod mount point. */
     if (database == NULL) {
-        rb_raise(eRbPodError, "This is not an iPod mount point.");
-        return Qnil;
+        return rbpod_raise_error(error);
     }
 
     DATA_PTR(self) = database;

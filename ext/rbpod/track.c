@@ -7,6 +7,10 @@
 VALUE cRbPodTrack;
 VALUE mRbPodTrackCollection;
 
+static VALUE rbpod_track_collection_parent(VALUE self) {
+    return rb_iv_get(self, "@parent");
+}
+
 inline VALUE rbpod_track_collection_create(VALUE parent, GList *items) {
     VALUE collection = rbpod_collection_create(items, cRbPodTrack);
     rb_extend_object(collection, mRbPodTrackCollection);
@@ -80,6 +84,8 @@ void Init_rbpod_track(void) {
     rb_define_method(cRbPodTrack, "transferred?", rbpod_track_is_transferred, 0);
 
     mRbPodTrackCollection = rb_define_module_under(cRbPodTrack, "Collection");
+
+    rb_define_private_method(mRbPodTrackCollection, "parent", rbpod_track_collection_parent, 0);
 
     return;
 }

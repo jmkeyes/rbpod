@@ -8,6 +8,10 @@
 VALUE cRbPodPlaylist;
 VALUE mRbPodPlaylistCollection;
 
+static VALUE rbpod_playlist_collection_parent(VALUE self) {
+    return rb_iv_get(self, "@parent");;
+}
+
 inline VALUE rbpod_playlist_collection_create(VALUE parent, GList *items) {
     VALUE collection = rbpod_collection_create(items, cRbPodPlaylist);
     rb_extend_object(collection, mRbPodPlaylistCollection);
@@ -94,6 +98,8 @@ void Init_rbpod_playlist(void) {
     rb_define_method(cRbPodPlaylist, "podcast_playlist?", rbpod_playlist_is_podcast, 0);
 
     mRbPodPlaylistCollection = rb_define_module_under(cRbPodPlaylist, "Collection");
+
+    rb_define_private_method(mRbPodPlaylistCollection, "parent", rbpod_playlist_collection_parent, 0);
 
     return;
 }

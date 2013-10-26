@@ -47,17 +47,15 @@ static VALUE rbpod_collection_each(VALUE self) {
     GList *current = NULL;
     VALUE item;
 
-    if (rb_block_given_p() == TRUE) {
-        /* If we were supplied a block, enumerate the entire list. */
-        for (current = collection->list; current != NULL; current = current->next) {
-            item = Data_Wrap_Struct(collection->klass, NULL, NULL, (void *) current->data);
-            rb_yield(item);
-        }
-        return Qnil;
-    } else {
-        /* Otherwise return an enumerator from this method to the caller. */
+    if (rb_block_given_p() == FALSE)
         return rb_funcall(self, rb_intern("enum_for"), 1, ID2SYM(rb_intern("each")));
+
+    /* If we were supplied a block, enumerate the entire list. */
+    for (current = collection->list; current != NULL; current = current->next) {
+        item = Data_Wrap_Struct(collection->klass, NULL, NULL, (void *) current->data);
+        rb_yield(item);
     }
+    return Qnil;
 }
 
 static VALUE rbpod_collection_initialize(VALUE self) {

@@ -75,30 +75,65 @@ static void rbpod_database_deallocate(void *handle) {
     return;
 }
 
-static VALUE rbpod_database_create(VALUE self, VALUE device_name, VALUE mount_point, VALUE model_number) {
-    gchar *_mount_point, *_model_number, *_device_name;
+static VALUE rbpod_database_create(int argc, VALUE *argv, VALUE self) {
+    gchar *_mount_point, *_device_name, *_model_number;
+    VALUE mount_point, device_name, model_number;
     Itdb_iTunesDB *database = NULL;
+    GDir *directory = NULL;
     GError *error = NULL;
 
-    _device_name  = StringValueCStr(device_name);
-    _mount_point  = StringValueCStr(mount_point);
+    if (rb_scan_args(argc, argv, "12", &mount_point, &device_name, &model_number) < 1) {
+        rb_raise(eRbPodError, "Invalid arguments.");
+        return Qnil;
+    }
 
-    /* GPod can function with a NULL model number, however, artwork will not function. */
+    /* Reject the mount point immediately if it isn't a string. */
+    if (TYPE(mount_point) != T_STRING && RSTRING_LEN(mount_point)) {
+        rb_raise(eRbPodError, "Mount point must be a non-empty string.");
+        return Qnil;
+    }
+
+    /* If we didn't specify a device name, default to 'iPod'. */
+    if (NIL_P(device_name) == TRUE)
+        device_name = rb_str_new2("iPod");
+
+    /* If the specified device name isn't a string, bail now. */
+    if (TYPE(device_name) != T_STRING || RSTRING_LEN(device_name) < 3) {
+        rb_raise(eRbPodError, "Device name should be a string of at least three characters.");
+        return Qnil;
+    }
+
+    /* If the specified model number is specified but isn't a string, bail now. */
+    if (NIL_P(model_number) == FALSE && (TYPE(model_number) != T_STRING || RSTRING_LEN(model_number) < 4)) {
+        rb_raise(eRbPodError, "Model number should be a string of at least four characters.");
+        return Qnil;
+    }
+
+    /* Extract pointers for glib use. */
+    _mount_point  = StringValueCStr(mount_point);
+    _device_name  = StringValueCStr(device_name);
+
+    /* GPod can function with a NULL model number, however, artwork will not function properly. */
     _model_number = !NIL_P(model_number) ? StringValueCStr(model_number) : NULL;
 
-    /* Initialize the iPod at this mount point, with this device name and model number. */
-    if (itdb_init_ipod(_mount_point, _model_number, _device_name, &error) == FALSE) {
+    /* Check if the mount point is a directory. */
+    directory = g_dir_open(_mount_point, 0, &error);
+
+    if (directory == NULL)
         return rbpod_raise_error(error);
-    } else {
-        error = NULL;
-    }
+
+    /* Glib seems to think so... */
+    g_dir_close(directory);
+
+    /* Initialize the iPod at this mount point, with this device name and model number. */
+    if (itdb_init_ipod(_mount_point, _model_number, _device_name, &error) == FALSE)
+        return rbpod_raise_error(error);
 
     /* Parse the newly created database. */
     database = itdb_parse(_mount_point, &error);
 
-    if (database == NULL) {
+    if (database == NULL)
         return rbpod_raise_error(error);
-    }
 
     /* Return an instance of this class using the newly created database. */
     return Data_Wrap_Struct(cRbPodDatabase, NULL, rbpod_database_deallocate, (void *) database);
@@ -138,7 +173,7 @@ void Init_rbpod_database(void) {
 
     rb_define_method(cRbPodDatabase, "initialize", rbpod_database_initialize, 1);
 
-    rb_define_singleton_method(cRbPodDatabase, "create!", rbpod_database_create, 3);
+    rb_define_singleton_method(cRbPodDatabase, "create!", rbpod_database_create, -1);
 
     rb_define_method(cRbPodDatabase, "mountpoint", rbpod_database_mountpoint_get, 0);
     rb_define_method(cRbPodDatabase, "mountpoint=", rbpod_database_mountpoint_set, 1);

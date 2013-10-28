@@ -60,7 +60,8 @@ static VALUE rbpod_device_capacity_get(VALUE self) {
 
 static VALUE rbpod_device_uuid_get(VALUE self) {
     Itdb_Device *device = TYPED_DATA_PTR(self, Itdb_Device);
-    return rb_str_new2(itdb_device_get_uuid(device));
+    const gchar *uuid = itdb_device_get_uuid(device);
+    return (uuid == NULL) ? Qnil : rb_str_new2(uuid);
 }
 
 static VALUE rbpod_device_sysinfo_get(VALUE self, VALUE key) {

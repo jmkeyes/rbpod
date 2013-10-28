@@ -29,12 +29,20 @@ static VALUE rbpod_collection_get(VALUE self, VALUE key) {
 static VALUE rbpod_collection_last(VALUE self) {
     struct collection *collection = TYPED_DATA_PTR(self, struct collection);
     GList *current = g_list_last(collection->list);
+
+    if (current == NULL)
+        return Qnil;
+
     return Data_Wrap_Struct(collection->klass, NULL, NULL, (void *) current->data);
 }
 
 static VALUE rbpod_collection_first(VALUE self) {
     struct collection *collection = TYPED_DATA_PTR(self, struct collection);
     GList *current = g_list_first(collection->list);
+
+    if (current == NULL)
+        return Qnil;
+
     return Data_Wrap_Struct(collection->klass, NULL, NULL, (void *) current->data);
 }
 

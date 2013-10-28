@@ -119,7 +119,14 @@ static VALUE rbpod_playlist_initialize(VALUE self, VALUE playlist_name, VALUE sm
 }
 
 static void rbpod_playlist_deallocate(void *handle) {
-    itdb_playlist_free((Itdb_Playlist *) handle);
+    Itdb_Playlist *playlist = (Itdb_Playlist *) handle;
+
+    /* This playlist was unmanaged, so free it manually. */
+    if (playlist->itdb == NULL || playlist->id == 0) {
+        itdb_playlist_free(playlist);
+    }
+
+    return;
 }
 
 static VALUE rbpod_playlist_allocate(VALUE self) {

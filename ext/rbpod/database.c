@@ -9,7 +9,8 @@
 
 VALUE cRbPodDatabase;
 
-static VALUE rbpod_database_write(VALUE self) {
+static VALUE rbpod_database_write(VALUE self)
+{
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
     GError *error = NULL;
 
@@ -20,18 +21,21 @@ static VALUE rbpod_database_write(VALUE self) {
     return self;
 }
 
-static VALUE rbpod_database_is_synchronized(VALUE self) {
+static VALUE rbpod_database_is_synchronized(VALUE self)
+{
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
     guint32 nontransferred = itdb_tracks_number_nontransferred(database);
     return BooleanValue(nontransferred == 0);
 }
 
-static VALUE rbpod_database_playlists_get(VALUE self) {
+static VALUE rbpod_database_playlists_get(VALUE self)
+{
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
     return rbpod_playlist_collection_create(self, database->playlists);
 }
 
-static VALUE rbpod_database_tracks_get(VALUE self) {
+static VALUE rbpod_database_tracks_get(VALUE self)
+{
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
     Itdb_Playlist *playlist = itdb_playlist_mpl(database);
     /* Use the master playlist as the parent for the master track list. */
@@ -39,43 +43,51 @@ static VALUE rbpod_database_tracks_get(VALUE self) {
     return rbpod_track_collection_create(parent, database->tracks);
 }
 
-static VALUE rbpod_database_device_get(VALUE self) {
+static VALUE rbpod_database_device_get(VALUE self)
+{
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
     return rbpod_device_create(database->device);
 }
 
-static VALUE rbpod_database_filename_get(VALUE self) {
+static VALUE rbpod_database_filename_get(VALUE self)
+{
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
     return rb_str_new2(database->filename);
 }
 
-static VALUE rbpod_database_version_get(VALUE self) {
+static VALUE rbpod_database_version_get(VALUE self)
+{
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
     return INT2NUM(database->version);
 }
 
-static VALUE rbpod_database_id_get(VALUE self) {
+static VALUE rbpod_database_id_get(VALUE self)
+{
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
     return INT2NUM(database->id);
 }
 
-static VALUE rbpod_database_mountpoint_get(VALUE self) {
+static VALUE rbpod_database_mountpoint_get(VALUE self)
+{
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
     return rb_str_new2(itdb_get_mountpoint(database));
 }
 
-static VALUE rbpod_database_mountpoint_set(VALUE self, VALUE path) {
+static VALUE rbpod_database_mountpoint_set(VALUE self, VALUE path)
+{
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
     itdb_set_mountpoint(database, StringValueCStr(path));
     return rbpod_database_mountpoint_get(self);
 }
 
-static void rbpod_database_deallocate(void *handle) {
+static void rbpod_database_deallocate(void *handle)
+{
     itdb_free((Itdb_iTunesDB *) handle);
     return;
 }
 
-static VALUE rbpod_database_create(int argc, VALUE *argv, VALUE self) {
+static VALUE rbpod_database_create(int argc, VALUE *argv, VALUE self)
+{
     gchar *_mount_point, *_device_name, *_model_number;
     VALUE mount_point, device_name, model_number;
     Itdb_iTunesDB *database = NULL;
@@ -94,8 +106,9 @@ static VALUE rbpod_database_create(int argc, VALUE *argv, VALUE self) {
     }
 
     /* If we didn't specify a device name, default to 'iPod'. */
-    if (NIL_P(device_name) == TRUE)
+    if (NIL_P(device_name) == TRUE) {
         device_name = rb_str_new2("iPod");
+    }
 
     /* If the specified device name isn't a string, bail now. */
     if (TYPE(device_name) != T_STRING || RSTRING_LEN(device_name) < 3) {
@@ -119,27 +132,31 @@ static VALUE rbpod_database_create(int argc, VALUE *argv, VALUE self) {
     /* Check if the mount point is a directory. */
     directory = g_dir_open(_mount_point, 0, &error);
 
-    if (directory == NULL)
+    if (directory == NULL) {
         return rbpod_raise_error(error);
+    }
 
     /* Glib seems to think so... */
     g_dir_close(directory);
 
     /* Initialize the iPod at this mount point, with this device name and model number. */
-    if (itdb_init_ipod(_mount_point, _model_number, _device_name, &error) == FALSE)
+    if (itdb_init_ipod(_mount_point, _model_number, _device_name, &error) == FALSE) {
         return rbpod_raise_error(error);
+    }
 
     /* Parse the newly created database. */
     database = itdb_parse(_mount_point, &error);
 
-    if (database == NULL)
+    if (database == NULL) {
         return rbpod_raise_error(error);
+    }
 
     /* Return an instance of this class using the newly created database. */
     return Data_Wrap_Struct(cRbPodDatabase, NULL, rbpod_database_deallocate, (void *) database);
 }
 
-static VALUE rbpod_database_initialize(VALUE self, VALUE mount_point) {
+static VALUE rbpod_database_initialize(VALUE self, VALUE mount_point)
+{
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
     Itdb_iTunesDB *previous = database;
     GError *error = NULL;
@@ -161,12 +178,14 @@ static VALUE rbpod_database_initialize(VALUE self, VALUE mount_point) {
     return self;
 }
 
-static VALUE rbpod_database_allocate(VALUE self) {
+static VALUE rbpod_database_allocate(VALUE self)
+{
     Itdb_iTunesDB *database = itdb_new();
     return Data_Wrap_Struct(cRbPodDatabase, NULL, rbpod_database_deallocate, (void *) database);
 }
 
-void Init_rbpod_database(void) {
+void Init_rbpod_database(void)
+{
     cRbPodDatabase = rb_define_class_under(mRbPod, "Database", rb_cObject);
 
     rb_define_alloc_func(cRbPodDatabase, rbpod_database_allocate);

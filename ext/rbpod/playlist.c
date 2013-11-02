@@ -8,11 +8,13 @@
 VALUE cRbPodPlaylist;
 VALUE mRbPodPlaylistCollection;
 
-static VALUE rbpod_playlist_collection_parent(VALUE self) {
+static VALUE rbpod_playlist_collection_parent(VALUE self)
+{
     return rb_iv_get(self, "@parent");
 }
 
-static VALUE rbpod_playlist_collection_get(VALUE self, VALUE key) {
+static VALUE rbpod_playlist_collection_get(VALUE self, VALUE key)
+{
     VALUE parent = rbpod_playlist_collection_parent(self);
     Itdb_iTunesDB *database = TYPED_DATA_PTR(parent, Itdb_iTunesDB);
     Itdb_Playlist *playlist = NULL;
@@ -28,27 +30,31 @@ static VALUE rbpod_playlist_collection_get(VALUE self, VALUE key) {
         break;
     }
 
-    if (playlist == NULL)
-       return Qnil;
+    if (playlist == NULL) {
+        return Qnil;
+    }
 
     return Data_Wrap_Struct(cRbPodPlaylist, NULL, NULL, (void *) playlist);
 }
 
-static VALUE rbpod_playlist_collection_podcasts_get(VALUE self) {
+static VALUE rbpod_playlist_collection_podcasts_get(VALUE self)
+{
     VALUE parent = rbpod_playlist_collection_parent(self);
     Itdb_iTunesDB *database = TYPED_DATA_PTR(parent, Itdb_iTunesDB);
     Itdb_Playlist *podcasts = itdb_playlist_podcasts(database);
     return Data_Wrap_Struct(cRbPodPlaylist, NULL, NULL, (void *) podcasts);
 }
 
-static VALUE rbpod_playlist_collection_master_get(VALUE self) {
+static VALUE rbpod_playlist_collection_master_get(VALUE self)
+{
     VALUE parent = rbpod_playlist_collection_parent(self);
     Itdb_iTunesDB *database = TYPED_DATA_PTR(parent, Itdb_iTunesDB);
     Itdb_Playlist *master = itdb_playlist_mpl(database);
     return Data_Wrap_Struct(cRbPodPlaylist, NULL, NULL, (void *) master);
 }
 
-inline VALUE rbpod_playlist_collection_create(VALUE parent, GList *items) {
+inline VALUE rbpod_playlist_collection_create(VALUE parent, GList *items)
+{
     VALUE collection = rbpod_collection_create(items, cRbPodPlaylist);
     rb_extend_object(collection, mRbPodPlaylistCollection);
     rb_extend_object(collection, rb_mComparable);
@@ -56,53 +62,63 @@ inline VALUE rbpod_playlist_collection_create(VALUE parent, GList *items) {
     return collection;
 }
 
-static VALUE rbpod_playlist_is_podcast(VALUE self) {
+static VALUE rbpod_playlist_is_podcast(VALUE self)
+{
     Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
     return BooleanValue(itdb_playlist_is_podcasts(playlist));
 }
 
-static VALUE rbpod_playlist_is_master(VALUE self) {
+static VALUE rbpod_playlist_is_master(VALUE self)
+{
     Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
     return BooleanValue(itdb_playlist_is_mpl(playlist));
 }
 
-static VALUE rbpod_playlist_is_smart(VALUE self) {
+static VALUE rbpod_playlist_is_smart(VALUE self)
+{
     Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
     return BooleanValue(playlist->is_spl);
 }
 
-static VALUE rbpod_playlist_timestamp_get(VALUE self) {
+static VALUE rbpod_playlist_timestamp_get(VALUE self)
+{
     Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
     return rb_funcall(rb_cTime, rb_intern("at"), 1, INT2NUM(playlist->timestamp));
 }
 
-static VALUE rbpod_playlist_shuffle(VALUE self) {
+static VALUE rbpod_playlist_shuffle(VALUE self)
+{
     Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
     itdb_playlist_randomize(playlist);
     return Qnil;
 }
 
-static VALUE rbpod_playlist_tracks_get(VALUE self) {
+static VALUE rbpod_playlist_tracks_get(VALUE self)
+{
     Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
     return rbpod_track_collection_create(self, playlist->members);
 }
 
-static VALUE rbpod_playlist_length_get(VALUE self) {
+static VALUE rbpod_playlist_length_get(VALUE self)
+{
     Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
     return INT2NUM(itdb_playlist_tracks_number(playlist));
 }
 
-static VALUE rbpod_playlist_name_get(VALUE self) {
+static VALUE rbpod_playlist_name_get(VALUE self)
+{
     Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
     return rb_str_new2(playlist->name);
 }
 
-static VALUE rbpod_playlist_id_get(VALUE self) {
+static VALUE rbpod_playlist_id_get(VALUE self)
+{
     Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
     return INT2NUM(playlist->id);
 }
 
-static VALUE rbpod_playlist_initialize(VALUE self, VALUE playlist_name, VALUE smart_playlist) {
+static VALUE rbpod_playlist_initialize(VALUE self, VALUE playlist_name, VALUE smart_playlist)
+{
     Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
     gchar *_playlist_name = StringValueCStr(playlist_name);
 
@@ -118,7 +134,8 @@ static VALUE rbpod_playlist_initialize(VALUE self, VALUE playlist_name, VALUE sm
     return self;
 }
 
-static void rbpod_playlist_deallocate(void *handle) {
+static void rbpod_playlist_deallocate(void *handle)
+{
     Itdb_Playlist *playlist = (Itdb_Playlist *) handle;
 
     /* This playlist was unmanaged, so free it manually. */
@@ -129,12 +146,14 @@ static void rbpod_playlist_deallocate(void *handle) {
     return;
 }
 
-static VALUE rbpod_playlist_allocate(VALUE self) {
+static VALUE rbpod_playlist_allocate(VALUE self)
+{
     Itdb_Playlist *playlist = itdb_playlist_new("KILROY WAS HERE", FALSE);
     return Data_Wrap_Struct(cRbPodPlaylist, NULL, rbpod_playlist_deallocate, (void *) playlist);
 }
 
-void Init_rbpod_playlist(void) {
+void Init_rbpod_playlist(void)
+{
     cRbPodPlaylist = rb_define_class_under(mRbPod, "Playlist", rb_cObject);
 
     rb_define_alloc_func(cRbPodPlaylist, rbpod_playlist_allocate);

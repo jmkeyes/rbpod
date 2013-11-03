@@ -9,7 +9,7 @@
 
 VALUE cRbPodDatabase;
 
-static VALUE rbpod_database_write(VALUE self)
+static VALUE rbpod_database_save(VALUE self)
 {
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
     GError *error = NULL;
@@ -207,6 +207,6 @@ void Init_rbpod_database(void)
 
     rb_define_method(cRbPodDatabase, "synchronized?", rbpod_database_is_synchronized, 0);
 
-    rb_define_method(cRbPodDatabase, "write!", rbpod_database_write, 0);
+    rb_define_method(cRbPodDatabase, "save!", rbpod_database_save, 0);
 }
 

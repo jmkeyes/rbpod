@@ -62,19 +62,19 @@ inline VALUE rbpod_playlist_collection_create(VALUE parent, GList *items)
     return collection;
 }
 
-static VALUE rbpod_playlist_is_podcast(VALUE self)
+static VALUE rbpod_playlist_podcast_p(VALUE self)
 {
     Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
     return BooleanValue(itdb_playlist_is_podcasts(playlist));
 }
 
-static VALUE rbpod_playlist_is_master(VALUE self)
+static VALUE rbpod_playlist_master_p(VALUE self)
 {
     Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
     return BooleanValue(itdb_playlist_is_mpl(playlist));
 }
 
-static VALUE rbpod_playlist_is_smart(VALUE self)
+static VALUE rbpod_playlist_smart_p(VALUE self)
 {
     Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
     return BooleanValue(playlist->is_spl);
@@ -167,9 +167,9 @@ void Init_rbpod_playlist(void)
     rb_define_method(cRbPodPlaylist, "shuffle!", rbpod_playlist_shuffle, 0);
     rb_define_method(cRbPodPlaylist, "created_on", rbpod_playlist_timestamp_get, 0);
 
-    rb_define_method(cRbPodPlaylist, "smart_playlist?", rbpod_playlist_is_smart, 0);
-    rb_define_method(cRbPodPlaylist, "master_playlist?", rbpod_playlist_is_master, 0);
-    rb_define_method(cRbPodPlaylist, "podcast_playlist?", rbpod_playlist_is_podcast, 0);
+    rb_define_method(cRbPodPlaylist, "smart_playlist?", rbpod_playlist_smart_p, 0);
+    rb_define_method(cRbPodPlaylist, "master_playlist?", rbpod_playlist_master_p, 0);
+    rb_define_method(cRbPodPlaylist, "podcast_playlist?", rbpod_playlist_podcast_p, 0);
 
     mRbPodPlaylistCollection = rb_define_module_under(cRbPodPlaylist, "Collection");
 

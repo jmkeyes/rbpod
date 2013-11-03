@@ -10,31 +10,31 @@ inline VALUE rbpod_device_create(Itdb_Device *device)
     return Data_Wrap_Struct(cRbPodDevice, NULL, NULL, (void *) device);
 }
 
-static VALUE rbpod_device_has_chapter_image_support(VALUE self)
+static VALUE rbpod_device_chapter_image_support_p(VALUE self)
 {
     Itdb_Device *device = TYPED_DATA_PTR(self, Itdb_Device);
     return BooleanValue(itdb_device_supports_chapter_image(device));
 }
 
-static VALUE rbpod_device_has_podcast_support(VALUE self)
+static VALUE rbpod_device_podcast_support_p(VALUE self)
 {
     Itdb_Device *device = TYPED_DATA_PTR(self, Itdb_Device);
     return BooleanValue(itdb_device_supports_podcast(device));
 }
 
-static VALUE rbpod_device_has_artwork_support(VALUE self)
+static VALUE rbpod_device_artwork_support_p(VALUE self)
 {
     Itdb_Device *device = TYPED_DATA_PTR(self, Itdb_Device);
     return BooleanValue(itdb_device_supports_artwork(device));
 }
 
-static VALUE rbpod_device_has_video_support(VALUE self)
+static VALUE rbpod_device_video_support_p(VALUE self)
 {
     Itdb_Device *device = TYPED_DATA_PTR(self, Itdb_Device);
     return BooleanValue(itdb_device_supports_video(device));
 }
 
-static VALUE rbpod_device_has_photo_support(VALUE self)
+static VALUE rbpod_device_photo_support_p(VALUE self)
 {
     Itdb_Device *device = TYPED_DATA_PTR(self, Itdb_Device);
     return BooleanValue(itdb_device_supports_photo(device));
@@ -102,7 +102,7 @@ static VALUE rbpod_device_sysinfo_set(VALUE self, VALUE key, VALUE value)
     return rbpod_device_sysinfo_get(self, key);
 }
 
-static VALUE rbpod_device_sysinfo_write(VALUE self)
+static VALUE rbpod_device_sysinfo_save(VALUE self)
 {
     Itdb_Device *device = TYPED_DATA_PTR(self, Itdb_Device);
     GError *error = NULL;
@@ -141,7 +141,7 @@ void Init_rbpod_device(void)
 
     rb_define_method(cRbPodDevice, "[]", rbpod_device_sysinfo_get, 1);
     rb_define_method(cRbPodDevice, "[]=", rbpod_device_sysinfo_set, 2);
-    rb_define_method(cRbPodDevice, "save!", rbpod_device_sysinfo_write, 0);
+    rb_define_method(cRbPodDevice, "save!", rbpod_device_sysinfo_save, 0);
 
     rb_define_method(cRbPodDevice, "uuid", rbpod_device_uuid_get, 0);
     rb_define_method(cRbPodDevice, "capacity", rbpod_device_capacity_get, 0);
@@ -149,11 +149,11 @@ void Init_rbpod_device(void)
     rb_define_method(cRbPodDevice, "model_name", rbpod_device_model_name_get, 0);
     rb_define_method(cRbPodDevice, "model_number", rbpod_device_model_number_get, 0);
 
-    rb_define_method(cRbPodDevice, "supports_photos?", rbpod_device_has_photo_support, 0);
-    rb_define_method(cRbPodDevice, "supports_videos?", rbpod_device_has_video_support, 0);
-    rb_define_method(cRbPodDevice, "supports_artwork?", rbpod_device_has_artwork_support, 0);
-    rb_define_method(cRbPodDevice, "supports_podcasts?", rbpod_device_has_podcast_support, 0);
-    rb_define_method(cRbPodDevice, "supports_chapter_images?", rbpod_device_has_chapter_image_support, 0);
+    rb_define_method(cRbPodDevice, "supports_photos?", rbpod_device_photo_support_p, 0);
+    rb_define_method(cRbPodDevice, "supports_videos?", rbpod_device_video_support_p, 0);
+    rb_define_method(cRbPodDevice, "supports_artwork?", rbpod_device_artwork_support_p, 0);
+    rb_define_method(cRbPodDevice, "supports_podcasts?", rbpod_device_podcast_support_p, 0);
+    rb_define_method(cRbPodDevice, "supports_chapter_images?", rbpod_device_chapter_image_support_p, 0);
 
     return;
 }

@@ -21,7 +21,7 @@ static VALUE rbpod_database_save(VALUE self)
     return self;
 }
 
-static VALUE rbpod_database_is_synchronized(VALUE self)
+static VALUE rbpod_database_synchronized_p(VALUE self)
 {
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
     guint32 nontransferred = itdb_tracks_number_nontransferred(database);
@@ -205,7 +205,7 @@ void Init_rbpod_database(void)
     rb_define_method(cRbPodDatabase, "tracks", rbpod_database_tracks_get, 0);
     rb_define_method(cRbPodDatabase, "playlists", rbpod_database_playlists_get, 0);
 
-    rb_define_method(cRbPodDatabase, "synchronized?", rbpod_database_is_synchronized, 0);
+    rb_define_method(cRbPodDatabase, "synchronized?", rbpod_database_synchronized_p, 0);
 
     rb_define_method(cRbPodDatabase, "save!", rbpod_database_save, 0);
 }

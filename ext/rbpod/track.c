@@ -21,7 +21,7 @@ inline VALUE rbpod_track_collection_create(VALUE parent, GList *items)
     return collection;
 }
 
-static VALUE rbpod_track_is_transferred(VALUE self)
+static VALUE rbpod_track_transferred_p(VALUE self)
 {
     Itdb_Track *track = TYPED_DATA_PTR(self, Itdb_Track);
     return BooleanValue(track->transferred);
@@ -95,7 +95,7 @@ void Init_rbpod_track(void)
     rb_define_method(cRbPodTrack, "file_type", rbpod_track_file_type_get, 0);
     rb_define_method(cRbPodTrack, "ipod_path", rbpod_track_ipod_path_get, 0);
 
-    rb_define_method(cRbPodTrack, "transferred?", rbpod_track_is_transferred, 0);
+    rb_define_method(cRbPodTrack, "transferred?", rbpod_track_transferred_p, 0);
 
     mRbPodTrackCollection = rb_define_module_under(cRbPodTrack, "Collection");
 

@@ -83,6 +83,7 @@ static VALUE rbpod_collection_each(VALUE self)
 
 static VALUE rbpod_collection_initialize(VALUE self)
 {
+    /* Private method, nothing to do here. */
     return self;
 }
 
@@ -114,7 +115,7 @@ void Init_rbpod_collection(void)
 
     rb_include_module(cRbPodCollection, rb_mEnumerable);
 
-    rb_define_method(cRbPodCollection, "initialize", rbpod_collection_initialize, 0);
+    rb_define_private_method(cRbPodCollection, "initialize", rbpod_collection_initialize, 0);
 
     rb_define_method(cRbPodCollection, "each", rbpod_collection_each, 0);
 

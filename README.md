@@ -18,47 +18,91 @@ Or install it yourself as:
 
 ## Usage
 
-Functional for most read-only purposes.
+Functional for most read-only purposes. To get started, add `require 'rbpod'` to your script.
 
-    #!/usr/bin/env ruby
+### RbPod::Database
 
-    require 'rbpod'
+To load a database from the filesystem:
 
-    # Explicitly load a database from the filesystem -- can be a mount point to an iPod.
-    database = RbPod::Database.new('/mnt/ipod/') # => #<RbPod::Database:0x8733fa4>
+    database = RbPod::Database.new('/mnt/ipod/') # => #<RbPod::Database:0xdeadbeef>
 
     database.version       # => 42
     database.mountpoint    # => "/mnt/ipod/"
     database.filename      # => "/mnt/ipod/iPod_Control/iTunes/iTunesDB"
     database.synchronized? # => true
 
-    # Device information, including model name, number, and capacity.
+If you'd like to create a blank database, you can do that too:
+
+    database = RbPod::Database.create!('/tmp/ipod-blank') # => #<RbPod::Database:0xdeadbeef>
+
+### RbPod::Device
+
+The device (if any) that backs the database can be interrogated:
+
+    # Model name, number, and capacity.
     database.device.capacity     # => 4.0
     database.device.generation   # => "Nano Video (3rd Gen.)"
     database.device.model_name   # => "Nano (Silver)"
     database.device.model_number # => "A978"
 
-    # Device feature support detection.
+    # Feature support.
     database.device.supports_photos?         # => true
     database.device.supports_videos?         # => true
     database.device.supports_artwork?        # => true
     database.device.supports_podcasts?       # => true
     database.device.supports_chapter_images? # => true
 
-    # Device SysInfo read/write.
+    # Reading/writing SysInfo. Set a key to nil to erase it.
     database.device['ModelNumStr'] # => "xA978"
     database.device['PotsdamConf45'] = "Kilroy Was Here"
     database.device.save!
 
-    # Playlists (includes enumerable)
+### RbPod::Collection
+
+All methods that return lists return a `Collection` enumerator decorated depending on it's contents:
+
+    database.playlists # => #<RbPod::Collection:0xdeadbeef>
+
+    # For a list of all the names of playlists on the iPod:
     database.playlists.map(&:name) # => ["iPod", "Podcasts", "Recently Added"]
 
-    # Track Listing (also enumerable)
-    database.tracks.length       # => 400
-    database.tracks.first.artist # => "Steppenwolf"
-    database.tracks.first.title  # => "Born To Be Wild"
+    # For direct access to the master playlist:
+    database.playlists.master # => #<RbPod::Playlist:0xdeadbeef>
 
-It's alpha quality -- many pieces still need to be implemented. Patches welcome.
+    # For direct access to the podcasts playlist:
+    database.playlists.podcasts # => #<RbPod::Playlist:0xdeadbeef>
+
+### RbPod::Playlist
+
+All playlists support a variety of methods:
+
+    playlist = database.playlists.master
+
+    playlist.name       # => "iPod"
+    playlist.length     # => 400
+    playlist.created_on # => 2008-04-05 08:47:46 -0700
+
+    playlist.master_playlist?  # => true
+    playlist.smart_playlist?   # => false
+    playlist.podcast_playlist? # => false
+
+    playlist.tracks # => #<RbPod::Collection:0xdeadbeef>
+
+### RbPod::Track
+
+Tracks also can do a lot, but not complete:
+
+    track = database.playlists.master.tracks.first
+
+    track.artist       # => "Steppenwolf"
+    track.title        # => "Born To Be Wild"
+    track.album        # => "All Time Greatest Hits Remastered"
+    track.file_type    # => "MPEG audio file"
+    track.transferred? # => true
+
+### RbPod::Error
+
+If anything goes belly up at run time, an `RbPod::Error` exception should be thrown with a detailed message.
 
 ## Contributing
 

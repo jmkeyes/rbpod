@@ -9,6 +9,9 @@ require 'bundler/gem_tasks'
 # Bring in RSpec's built-in rake task.
 require 'rspec/core/rake_task'
 
+# Bring in RDoc's built-in rake task.
+require 'rdoc/task'
+
 # By default, clean, compile and then test.
 task :default => [ :compile, :test ]
 
@@ -28,6 +31,14 @@ RSpec::Core::RakeTask.new(:test) do |task|
   task.pattern = 'spec/**/*_spec.rb'
   # Execute ruby with warnings enabled.
   task.ruby_opts = '-w'
+end
+
+desc "Build all RDoc documentation."
+RDoc::Task.new(:rdoc) do |task|
+ task.main = 'README.md'
+ task.markup = 'markdown'
+ task.rdoc_files.include("README.md", 'lib/**/*.rb', 'ext/**/*.[ch]')
+ task.rdoc_dir = 'doc'
 end
 
 desc "Open a console with rbpod preloaded."

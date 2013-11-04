@@ -5,21 +5,6 @@
 #include "collection.h"
 
 VALUE cRbPodTrack;
-VALUE mRbPodTrackCollection;
-
-static VALUE rbpod_track_collection_parent(VALUE self)
-{
-    return rb_iv_get(self, "@parent");
-}
-
-inline VALUE rbpod_track_collection_create(VALUE parent, GList *items)
-{
-    VALUE collection = rbpod_collection_create(items, cRbPodTrack);
-    rb_extend_object(collection, mRbPodTrackCollection);
-    rb_extend_object(collection, rb_mComparable);
-    rb_iv_set(collection, "@parent", parent);
-    return collection;
-}
 
 static VALUE rbpod_track_transferred_p(VALUE self)
 {
@@ -96,10 +81,6 @@ void Init_rbpod_track(void)
     rb_define_method(cRbPodTrack, "ipod_path", rbpod_track_ipod_path_get, 0);
 
     rb_define_method(cRbPodTrack, "transferred?", rbpod_track_transferred_p, 0);
-
-    mRbPodTrackCollection = rb_define_module_under(cRbPodTrack, "Collection");
-
-    rb_define_private_method(mRbPodTrackCollection, "parent", rbpod_track_collection_parent, 0);
 
     return;
 }

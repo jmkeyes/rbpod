@@ -6,6 +6,8 @@
 #include "playlist.h"
 #include "database.h"
 #include "collection.h"
+#include "track_collection.h"
+#include "playlist_collection.h"
 
 VALUE mRbPod;
 VALUE eRbPodError;
@@ -42,9 +44,11 @@ void Init_rbpod(void)
 
     /* Set up the RbPod::Playlist class. */
     Init_rbpod_playlist();
+    Init_rbpod_playlist_collection();
 
     /* Set up the RbPod::Track class. */
     Init_rbpod_track();
+    Init_rbpod_track_collection();
 
     return;
 }

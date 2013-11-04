@@ -5,7 +5,8 @@
 #include "device.h"
 #include "playlist.h"
 #include "database.h"
-#include "collection.h"
+#include "track_collection.h"
+#include "playlist_collection.h"
 
 VALUE cRbPodDatabase;
 

@@ -1,9 +1,7 @@
 /* database.c */
 
 #include "rbpod.h"
-#include "track.h"
 #include "device.h"
-#include "playlist.h"
 #include "database.h"
 #include "track_collection.h"
 #include "playlist_collection.h"

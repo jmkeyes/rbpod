@@ -2,7 +2,6 @@
 
 #include "rbpod.h"
 #include "track.h"
-#include "collection.h"
 
 VALUE cRbPodTrack;
 

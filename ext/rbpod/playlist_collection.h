@@ -3,6 +3,8 @@
 #ifndef RBPOD_PLAYLIST_COLLECTION_H
 #define RBPOD_PLAYLIST_COLLECTION_H
 
+#include "playlist.h"
+
 RUBY_EXTERN VALUE mRbPodPlaylistCollection;
 
 void Init_rbpod_playlist_collection(void);

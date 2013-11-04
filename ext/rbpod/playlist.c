@@ -1,7 +1,6 @@
 /* playlist.c */
 
 #include "rbpod.h"
-#include "track.h"
 #include "playlist.h"
 #include "track_collection.h"
 

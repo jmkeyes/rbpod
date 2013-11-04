@@ -1,4 +1,4 @@
-/* track.c */
+/* track_collection.c */
 
 #include "rbpod.h"
 #include "track.h"

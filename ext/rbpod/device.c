@@ -99,7 +99,7 @@ static VALUE rbpod_device_sysinfo_set(VALUE self, VALUE key, VALUE value)
 
     itdb_device_set_sysinfo(device, _key, _value);
 
-    return rbpod_device_sysinfo_get(self, key);
+    return Qnil;
 }
 
 static VALUE rbpod_device_sysinfo_save(VALUE self)
@@ -111,7 +111,7 @@ static VALUE rbpod_device_sysinfo_save(VALUE self)
         return rbpod_raise_error(error);
     }
 
-    return self;
+    return Qnil;
 }
 
 static VALUE rbpod_device_initialize(VALUE self)

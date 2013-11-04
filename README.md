@@ -39,23 +39,25 @@ If you'd like to create a blank database, you can do that too:
 
 The device (if any) that backs the database can be interrogated:
 
+    device = database.device # => #<RbPod::Device:0xdeadbeef>
+
     # Model name, number, and capacity.
-    database.device.capacity     # => 4.0
-    database.device.generation   # => "Nano Video (3rd Gen.)"
-    database.device.model_name   # => "Nano (Silver)"
-    database.device.model_number # => "A978"
+    device.capacity     # => 4.0
+    device.generation   # => "Nano Video (3rd Gen.)"
+    device.model_name   # => "Nano (Silver)"
+    device.model_number # => "A978"
 
     # Feature support.
-    database.device.supports_photos?         # => true
-    database.device.supports_videos?         # => true
-    database.device.supports_artwork?        # => true
-    database.device.supports_podcasts?       # => true
-    database.device.supports_chapter_images? # => true
+    device.supports_photos?         # => true
+    device.supports_videos?         # => true
+    device.supports_artwork?        # => true
+    device.supports_podcasts?       # => true
+    device.supports_chapter_images? # => true
 
     # Reading/writing SysInfo. Set a key to nil to erase it.
-    database.device['ModelNumStr'] # => "xA978"
-    database.device['PotsdamConf45'] = "Kilroy Was Here"
-    database.device.save!
+    device['ModelNumStr'] # => "xA978"
+    device['PotsdamConf45'] = "Kilroy Was Here"
+    device.save!
 
 ### RbPod::Collection
 

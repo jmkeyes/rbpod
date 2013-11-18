@@ -83,11 +83,38 @@ static void rbpod_database_deallocate(void *handle)
     return;
 }
 
+static VALUE rbpod_database_initialize(VALUE self, VALUE mount_point)
+{
+    Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
+    Itdb_iTunesDB *previous = database;
+    GError *error = NULL;
+
+    /* Try to parse the database from the given mount point. */
+    database = itdb_parse(StringValueCStr(mount_point), &error);
+
+    if (database == NULL) {
+        return rbpod_raise_error(error);
+    }
+
+    /* Overwrite our old database with the new one. */
+    DATA_PTR(self) = database;
+
+    /* Free the old one. */
+    itdb_free(previous);
+
+    return self;
+}
+
+static VALUE rbpod_database_allocate(VALUE self)
+{
+    Itdb_iTunesDB *database = itdb_new();
+    return Data_Wrap_Struct(cRbPodDatabase, NULL, rbpod_database_deallocate, (void *) database);
+}
+
 static VALUE rbpod_database_create(int argc, VALUE *argv, VALUE self)
 {
+    VALUE mount_point, device_name, model_number, instance;
     gchar *_mount_point, *_device_name, *_model_number;
-    VALUE mount_point, device_name, model_number;
-    Itdb_iTunesDB *database = NULL;
     GDir *directory = NULL;
     GError *error = NULL;
 
@@ -141,44 +168,10 @@ static VALUE rbpod_database_create(int argc, VALUE *argv, VALUE self)
         return rbpod_raise_error(error);
     }
 
-    /* Parse the newly created database. */
-    database = itdb_parse(_mount_point, &error);
-
-    if (database == NULL) {
-        return rbpod_raise_error(error);
-    }
+    instance = rbpod_database_allocate(cRbPodDatabase);
 
     /* Return an instance of this class using the newly created database. */
-    return Data_Wrap_Struct(cRbPodDatabase, NULL, rbpod_database_deallocate, (void *) database);
-}
-
-static VALUE rbpod_database_initialize(VALUE self, VALUE mount_point)
-{
-    Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
-    Itdb_iTunesDB *previous = database;
-    GError *error = NULL;
-
-    /* Try to parse the database from the given mount point. */
-    database = itdb_parse(StringValueCStr(mount_point), &error);
-
-    /* The given mount point was not an iPod mount point. */
-    if (database == NULL) {
-        return rbpod_raise_error(error);
-    }
-
-    /* Overwrite our old database with the new one. */
-    DATA_PTR(self) = database;
-
-    /* Free the old one. */
-    itdb_free(previous);
-
-    return self;
-}
-
-static VALUE rbpod_database_allocate(VALUE self)
-{
-    Itdb_iTunesDB *database = itdb_new();
-    return Data_Wrap_Struct(cRbPodDatabase, NULL, rbpod_database_deallocate, (void *) database);
+    return rbpod_database_initialize(instance, mount_point);
 }
 
 void Init_rbpod_database(void)

@@ -124,7 +124,7 @@ static VALUE rbpod_database_create(int argc, VALUE *argv, VALUE self)
     }
 
     /* Reject the mount point immediately if it isn't a string. */
-    if (TYPE(mount_point) != T_STRING && RSTRING_LEN(mount_point)) {
+    if (TYPE(mount_point) != T_STRING && RSTRING_LEN(mount_point) > 0) {
         rb_raise(eRbPodError, "Mount point must be a non-empty string.");
         return Qnil;
     }

@@ -107,13 +107,13 @@ static VALUE rbpod_database_create(int argc, VALUE *argv, VALUE self)
         device_name = rb_str_new2("iPod");
     }
 
-    /* If the specified device name isn't a string, bail now. */
+    /* If the specified device name isn't a string of at least three characters, bail now. */
     if (TYPE(device_name) != T_STRING || RSTRING_LEN(device_name) < 3) {
         rb_raise(eRbPodError, "Device name should be a string of at least three characters.");
         return Qnil;
     }
 
-    /* If the specified model number is specified but isn't a string, bail now. */
+    /* If the specified model number is specified but isn't a string, bail now. TODO: Use a regexp, stupid. */
     if (NIL_P(model_number) == FALSE && (TYPE(model_number) != T_STRING || RSTRING_LEN(model_number) < 4)) {
         rb_raise(eRbPodError, "Model number should be a string of at least four characters.");
         return Qnil;
@@ -123,7 +123,7 @@ static VALUE rbpod_database_create(int argc, VALUE *argv, VALUE self)
     _mount_point  = StringValueCStr(mount_point);
     _device_name  = StringValueCStr(device_name);
 
-    /* GPod can function with a NULL model number, however, artwork will not function properly. */
+    /* GPod can function with a NULL model number, however, artwork may not function properly. */
     _model_number = !NIL_P(model_number) ? StringValueCStr(model_number) : NULL;
 
     /* Check if the mount point is a directory. */

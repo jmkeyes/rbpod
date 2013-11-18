@@ -39,26 +39,15 @@ inline VALUE rbpod_raise_error(GError *error)
 
 void Init_rbpod(void)
 {
-    /* Set up the top-level RbPod module. */
     mRbPod = rb_define_module("RbPod");
 
-    /* Subclass RuntimeError for ourselves. */
     eRbPodError = rb_define_class_under(mRbPod, "Error", rb_eRuntimeError);
 
-    /* Set up the RbPod::Database class. */
     Init_rbpod_database();
-
-    /* Set up the RbPod::Device class. */
     Init_rbpod_device();
-
-    /* Set up the RbPod::Collection class. */
     Init_rbpod_collection();
-
-    /* Set up the RbPod::Playlist class. */
     Init_rbpod_playlist();
     Init_rbpod_playlist_collection();
-
-    /* Set up the RbPod::Track class. */
     Init_rbpod_track();
     Init_rbpod_track_collection();
 

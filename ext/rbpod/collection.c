@@ -81,7 +81,6 @@ static VALUE rbpod_collection_each(VALUE self)
 
 static VALUE rbpod_collection_initialize(VALUE self)
 {
-    /* Private method, nothing to do here. */
     return self;
 }
 

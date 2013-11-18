@@ -17,12 +17,11 @@ static VALUE rbpod_playlist_collection_get(VALUE self, VALUE key)
     Itdb_Playlist *playlist = NULL;
 
     switch (TYPE(key)) {
-    case T_SYMBOL: /* Convert symbol to string and fall through. */
-        key = rb_funcall(key, rb_intern("to_s"), 0);
-    case T_STRING: /* String index; lookup by name. */
+    case T_SYMBOL:
+    case T_STRING:
         playlist = itdb_playlist_by_name(database, StringValueCStr(key));
         break;
-    case T_FIXNUM: /* Integer index; lookup by position. */
+    case T_FIXNUM:
         playlist = itdb_playlist_by_nr(database, FIX2INT(key));
         break;
     }
@@ -68,11 +67,9 @@ void Init_rbpod_playlist_collection(void)
 
     rb_define_private_method(mRbPodPlaylistCollection, "parent", rbpod_playlist_collection_parent, 0);
 
-    /* iPod-specific methods. */
     rb_define_method(mRbPodPlaylistCollection, "master", rbpod_playlist_collection_master_get, 0);
     rb_define_method(mRbPodPlaylistCollection, "podcasts", rbpod_playlist_collection_podcasts_get, 0);
 
-    /* Array operations. */
     rb_define_method(mRbPodPlaylistCollection, "[]", rbpod_playlist_collection_get, 1);
 
     return;

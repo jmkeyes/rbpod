@@ -3,8 +3,6 @@
 #include "rbpod.h"
 #include "device.h"
 
-VALUE cRbPodDevice;
-
 inline VALUE rbpod_device_create(Itdb_Device *device)
 {
     return Data_Wrap_Struct(cRbPodDevice, NULL, NULL, (void *) device);

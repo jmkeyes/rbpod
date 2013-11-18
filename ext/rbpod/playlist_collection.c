@@ -3,8 +3,7 @@
 #include "rbpod.h"
 #include "playlist.h"
 #include "collection.h"
-
-VALUE mRbPodPlaylistCollection;
+#include "playlist_collection.h"
 
 static VALUE rbpod_playlist_collection_parent(VALUE self)
 {

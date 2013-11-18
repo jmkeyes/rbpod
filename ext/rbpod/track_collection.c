@@ -3,8 +3,7 @@
 #include "rbpod.h"
 #include "track.h"
 #include "collection.h"
-
-VALUE mRbPodTrackCollection;
+#include "track_collection.h"
 
 static VALUE rbpod_track_collection_parent(VALUE self)
 {

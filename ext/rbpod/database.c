@@ -6,8 +6,6 @@
 #include "track_collection.h"
 #include "playlist_collection.h"
 
-VALUE cRbPodDatabase;
-
 static VALUE rbpod_database_save(VALUE self)
 {
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);

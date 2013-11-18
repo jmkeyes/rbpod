@@ -12,6 +12,18 @@
 VALUE mRbPod;
 VALUE eRbPodError;
 
+VALUE cRbPodDatabase;
+VALUE cRbPodDevice;
+
+VALUE cRbPodCollection;
+
+VALUE cRbPodPlaylist;
+VALUE mRbPodPlaylistCollection;
+
+VALUE cRbPodTrack;
+VALUE mRbPodTrackCollection;
+
+
 inline VALUE rbpod_raise_error(GError *error)
 {
     VALUE error_message;

@@ -4,8 +4,6 @@
 #include "playlist.h"
 #include "track_collection.h"
 
-VALUE cRbPodPlaylist;
-
 static VALUE rbpod_playlist_podcast_p(VALUE self)
 {
     Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);

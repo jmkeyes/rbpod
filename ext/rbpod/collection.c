@@ -3,8 +3,6 @@
 #include "rbpod.h"
 #include "collection.h"
 
-VALUE cRbPodCollection;
-
 struct collection {
     VALUE klass;
     GList *list;

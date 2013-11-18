@@ -3,8 +3,6 @@
 #include "rbpod.h"
 #include "track.h"
 
-VALUE cRbPodTrack;
-
 static VALUE rbpod_track_transferred_p(VALUE self)
 {
     Itdb_Track *track = TYPED_DATA_PTR(self, Itdb_Track);

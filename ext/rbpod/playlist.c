@@ -98,6 +98,9 @@ static VALUE rbpod_playlist_allocate(VALUE self)
 
 void Init_rbpod_playlist(void)
 {
+#if RDOC_CAN_PARSE_DOCUMENTATION
+     mRbPod = rb_define_module("RbPod");
+#endif
     cRbPodPlaylist = rb_define_class_under(mRbPod, "Playlist", rb_cObject);
 
     rb_define_alloc_func(cRbPodPlaylist, rbpod_playlist_allocate);

@@ -109,6 +109,9 @@ static VALUE rbpod_collection_allocate(VALUE self)
 
 void Init_rbpod_collection(void)
 {
+#if RDOC_CAN_PARSE_DOCUMENTATION
+    mRbPod = rb_define_module("RbPod");
+#endif
     cRbPodCollection = rb_define_class_under(mRbPod, "Collection", rb_cObject);
 
     rb_define_alloc_func(cRbPodCollection, rbpod_collection_allocate);

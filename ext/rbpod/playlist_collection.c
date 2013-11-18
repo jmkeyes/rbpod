@@ -62,6 +62,9 @@ inline VALUE rbpod_playlist_collection_create(VALUE parent, GList *items)
 
 void Init_rbpod_playlist_collection(void)
 {
+#if RDOC_CAN_PARSE_DOCUMENTATION
+    mRbPod = rb_define_module("RbPod");
+#endif
     mRbPodPlaylistCollection = rb_define_module_under(mRbPod, "PlaylistCollection");
 
     rb_define_private_method(mRbPodPlaylistCollection, "parent", rbpod_playlist_collection_parent, 0);

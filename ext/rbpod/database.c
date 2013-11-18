@@ -185,6 +185,9 @@ static VALUE rbpod_database_allocate(VALUE self)
 
 void Init_rbpod_database(void)
 {
+#if RDOC_CAN_PARSE_DOCUMENTATION
+    mRbPod = rb_define_module("RbPod");
+#endif
     cRbPodDatabase = rb_define_class_under(mRbPod, "Database", rb_cObject);
 
     rb_define_alloc_func(cRbPodDatabase, rbpod_database_allocate);

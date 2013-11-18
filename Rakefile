@@ -38,6 +38,7 @@ RDoc::Task.new(:rdoc) do |task|
  task.main = 'README.md'
  task.markup = 'markdown'
  task.rdoc_files.include("README.md", 'lib/**/*.rb', 'ext/**/*.[ch]')
+ task.options << "--all"
  task.rdoc_dir = 'doc'
 end
 

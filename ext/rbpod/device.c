@@ -132,6 +132,9 @@ static VALUE rbpod_device_allocate(VALUE self)
 
 void Init_rbpod_device(void)
 {
+#if RDOC_CAN_PARSE_DOCUMENTATION
+    mRbPod = rb_define_module("RbPod");
+#endif
     cRbPodDevice = rb_define_class_under(mRbPod, "Device", rb_cObject);
 
     rb_define_alloc_func(cRbPodDevice, rbpod_device_allocate);

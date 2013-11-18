@@ -66,6 +66,9 @@ static VALUE rbpod_track_allocate(VALUE self)
 
 void Init_rbpod_track(void)
 {
+#if RDOC_CAN_PARSE_DOCUMENTATION
+    mRbPod = rb_define_module("RbPod");
+#endif
     cRbPodTrack = rb_define_class_under(mRbPod, "Track", rb_cObject);
 
     rb_define_alloc_func(cRbPodTrack, rbpod_track_allocate);

@@ -17,11 +17,11 @@ static VALUE rbpod_track_transferred_p(VALUE self)
 
 /*
  * call-seq:
- *     file_path() -> String
+ *     path() -> String
  *
  * Returns the full path to the file backing this track on the device.
  */
-static VALUE rbpod_track_file_path_get(VALUE self)
+static VALUE rbpod_track_path_get(VALUE self)
 {
     Itdb_Track *track = TYPED_DATA_PTR(self, Itdb_Track);
     VALUE mount_point, path_parts, file_path, full_path;
@@ -53,11 +53,11 @@ static VALUE rbpod_track_file_path_get(VALUE self)
 
 /*
  * call-seq:
- *     file_type() -> String
+ *     type() -> String
  *
  * Returns a human-readable string describing the content of the track.
  */
-static VALUE rbpod_track_file_type_get(VALUE self)
+static VALUE rbpod_track_type_get(VALUE self)
 {
     Itdb_Track *track = TYPED_DATA_PTR(self, Itdb_Track);
     return rb_str_new2(track->filetype);
@@ -149,8 +149,8 @@ void Init_rbpod_track(void)
     rb_define_method(cRbPodTrack, "title", rbpod_track_title_get, 0);
     rb_define_method(cRbPodTrack, "album", rbpod_track_album_get, 0);
     rb_define_method(cRbPodTrack, "artist", rbpod_track_artist_get, 0);
-    rb_define_method(cRbPodTrack, "file_type", rbpod_track_file_type_get, 0);
-    rb_define_method(cRbPodTrack, "file_path", rbpod_track_file_path_get, 0);
+    rb_define_method(cRbPodTrack, "type", rbpod_track_type_get, 0);
+    rb_define_method(cRbPodTrack, "path", rbpod_track_path_get, 0);
 
     rb_define_method(cRbPodTrack, "transferred?", rbpod_track_transferred_p, 0);
 

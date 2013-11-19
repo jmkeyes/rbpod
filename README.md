@@ -24,83 +24,95 @@ Functional for most read-only purposes. To get started, add `require 'rbpod'` to
 
 To load a database from the filesystem:
 
-    database = RbPod::Database.new('/mnt/ipod/') # => #<RbPod::Database:0xdeadbeef>
+```ruby
+database = RbPod::Database.new('/mnt/ipod/') # => #<RbPod::Database:0xdeadbeef>
 
-    database.version       # => 42
-    database.mountpoint    # => "/mnt/ipod/"
-    database.filename      # => "/mnt/ipod/iPod_Control/iTunes/iTunesDB"
-    database.synchronized? # => true
+database.version       # => 42
+database.mountpoint    # => "/mnt/ipod/"
+database.filename      # => "/mnt/ipod/iPod_Control/iTunes/iTunesDB"
+database.synchronized? # => true
+```
 
 If you'd like to create a blank database, you can do that too:
 
-    database = RbPod::Database.create!('/tmp/ipod-blank') # => #<RbPod::Database:0xdeadbeef>
+```ruby
+database = RbPod::Database.create!('/tmp/ipod-blank') # => #<RbPod::Database:0xdeadbeef>
+```
 
 ### RbPod::Device
 
 The device (if any) that backs the database can be interrogated:
 
-    device = database.device # => #<RbPod::Device:0xdeadbeef>
+```ruby
+device = database.device # => #<RbPod::Device:0xdeadbeef>
 
-    # Model name, number, and capacity.
-    device.capacity     # => 4.0
-    device.generation   # => "Nano Video (3rd Gen.)"
-    device.model_name   # => "Nano (Silver)"
-    device.model_number # => "A978"
+# Model name, number, and capacity.
+device.capacity     # => 4.0
+device.generation   # => "Nano Video (3rd Gen.)"
+device.model_name   # => "Nano (Silver)"
+device.model_number # => "A978"
 
-    # Feature support.
-    device.supports_photos?         # => true
-    device.supports_videos?         # => true
-    device.supports_artwork?        # => true
-    device.supports_podcasts?       # => true
-    device.supports_chapter_images? # => true
+# Feature support.
+device.supports_photos?         # => true
+device.supports_videos?         # => true
+device.supports_artwork?        # => true
+device.supports_podcasts?       # => true
+device.supports_chapter_images? # => true
 
-    # Reading/writing SysInfo. Set a key to nil to erase it.
-    device['ModelNumStr'] # => "xA978"
-    device['PotsdamConf45'] = "Kilroy Was Here"
-    device.save!
+# Reading/writing SysInfo. Set a key to nil to erase it.
+device['ModelNumStr'] # => "xA978"
+device['PotsdamConf45'] = "Kilroy Was Here"
+device.save!
+```
 
 ### RbPod::Collection
 
 All methods that return lists return a `Collection` enumerator decorated depending on it's contents:
 
-    database.playlists # => #<RbPod::Collection:0xdeadbeef>
+```ruby
+database.playlists # => #<RbPod::Collection:0xdeadbeef>
 
-    # For a list of all the names of playlists on the iPod:
-    database.playlists.map(&:name) # => ["iPod", "Podcasts", "Recently Added"]
+# For a list of all the names of playlists on the iPod:
+database.playlists.map(&:name) # => ["iPod", "Podcasts", "Recently Added"]
 
-    # For direct access to the master playlist:
-    database.playlists.master # => #<RbPod::Playlist:0xdeadbeef>
+# For direct access to the master playlist:
+database.playlists.master # => #<RbPod::Playlist:0xdeadbeef>
 
-    # For direct access to the podcasts playlist:
-    database.playlists.podcasts # => #<RbPod::Playlist:0xdeadbeef>
+# For direct access to the podcasts playlist:
+database.playlists.podcasts # => #<RbPod::Playlist:0xdeadbeef>
+```
 
 ### RbPod::Playlist
 
 All playlists support a variety of methods:
 
-    playlist = database.playlists.master
+```ruby
+playlist = database.playlists.master
 
-    playlist.name       # => "iPod"
-    playlist.length     # => 400
-    playlist.created_on # => 2008-04-05 08:47:46 -0700
+playlist.name       # => "iPod"
+playlist.length     # => 400
+playlist.created_on # => 2008-04-05 08:47:46 -0700
 
-    playlist.master_playlist?  # => true
-    playlist.smart_playlist?   # => false
-    playlist.podcast_playlist? # => false
+playlist.master_playlist?  # => true
+playlist.smart_playlist?   # => false
+playlist.podcast_playlist? # => false
 
-    playlist.tracks # => #<RbPod::Collection:0xdeadbeef>
+playlist.tracks # => #<RbPod::Collection:0xdeadbeef>
+```
 
 ### RbPod::Track
 
 Tracks also can do a lot, but not complete:
 
-    track = database.playlists.master.tracks.first
+```ruby
+track = database.playlists.master.tracks.first
 
-    track.artist       # => "Steppenwolf"
-    track.title        # => "Born To Be Wild"
-    track.album        # => "All Time Greatest Hits Remastered"
-    track.file_type    # => "MPEG audio file"
-    track.transferred? # => true
+track.artist       # => "Steppenwolf"
+track.title        # => "Born To Be Wild"
+track.album        # => "All Time Greatest Hits Remastered"
+track.file_type    # => "MPEG audio file"
+track.transferred? # => true
+````
 
 ### RbPod::Error
 

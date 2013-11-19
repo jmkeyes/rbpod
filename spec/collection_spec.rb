@@ -17,8 +17,8 @@ describe RbPod::Collection do
   end
 
   describe '#each' do
-    it 'should yield to a block and return nil' do
-      @collection.each(&@block).should be_nil
+    it 'should yield to a block and return itself' do
+      @collection.each(&@block).should_not be_nil
     end
 
     it 'should return an Enumerator without a block' do

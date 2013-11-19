@@ -66,9 +66,8 @@ static VALUE rbpod_collection_each(VALUE self)
     GList *current = NULL;
     VALUE item;
 
-    if (rb_block_given_p() == FALSE) {
-        return rb_funcall(self, rb_intern("enum_for"), 1, ID2SYM(rb_intern("each")));
-    }
+    /* Return an enumerator if a block was not supplied. */
+    RETURN_ENUMERATOR(self, 0, 0);
 
     /* If we were supplied a block, enumerate the entire list. */
     for (current = collection->list; current != NULL; current = current->next) {
@@ -76,7 +75,7 @@ static VALUE rbpod_collection_each(VALUE self)
         rb_yield(item);
     }
 
-    return Qnil;
+    return self;
 }
 
 static VALUE rbpod_collection_initialize(VALUE self)

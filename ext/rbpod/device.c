@@ -2,11 +2,7 @@
 
 #include "rbpod.h"
 #include "device.h"
-
-inline VALUE rbpod_device_create(Itdb_Device *device)
-{
-    return Data_Wrap_Struct(cRbPodDevice, NULL, NULL, (void *) device);
-}
+#include "database.h"
 
 /*
  * call-seq:
@@ -190,14 +186,31 @@ static VALUE rbpod_device_sysinfo_save(VALUE self)
     return Qnil;
 }
 
-static void rbpod_device_deallocate(void *handle)
-{
-    itdb_device_free((Itdb_Device *) handle);
-}
+/*
+ * call-seq:
+ *     initialize(database) -> RbPod::Device
+ *
+ * Creates an RbPod::Device for a given RbPod::Database. You shouldn't have to call this.
+ */
+static VALUE rbpod_device_initialize(VALUE self, VALUE database) {
+    Itdb_iTunesDB *_database = TYPED_DATA_PTR(database, Itdb_iTunesDB);
 
-static VALUE rbpod_device_allocate(VALUE self)
-{
-    return Data_Wrap_Struct(cRbPodDevice, NULL, rbpod_device_deallocate, (void *) itdb_device_new());
+    /* Make sure we were given an instance of a RbPod::Database. */
+    if (rb_class_of(database) != cRbPodDatabase) {
+        rb_raise(eRbPodError, "Given database must be an instance of RbPod::Database: %s", StringValueCStr(database));
+        return Qnil;
+    }
+
+    /* The database pointer and it's device should both be non-NULL. */
+    if (_database == NULL || _database->device == NULL) {
+        rb_raise(eRbPodError, "Given database and/or device was NULL.");
+        return Qnil;
+    }
+
+    /* Attach our data pointer to this database's backing device. */
+    DATA_PTR(self) = _database->device;
+
+    return self;
 }
 
 void Init_rbpod_device(void)
@@ -207,7 +220,7 @@ void Init_rbpod_device(void)
 #endif
     cRbPodDevice = rb_define_class_under(mRbPod, "Device", rb_cObject);
 
-    rb_define_alloc_func(cRbPodDevice, rbpod_device_allocate);
+    rb_define_method(cRbPodDevice, "initialize", rbpod_device_initialize, 1);
 
     rb_define_method(cRbPodDevice, "[]", rbpod_device_sysinfo_get, 1);
     rb_define_method(cRbPodDevice, "[]=", rbpod_device_sysinfo_set, 2);

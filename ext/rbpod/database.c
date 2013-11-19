@@ -65,8 +65,7 @@ static VALUE rbpod_database_tracks_get(VALUE self)
  */
 static VALUE rbpod_database_device_get(VALUE self)
 {
-    Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
-    return rbpod_device_create(database->device);
+    return rb_class_new_instance(1, &self, cRbPodDevice);
 }
 
 /*

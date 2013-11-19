@@ -192,7 +192,8 @@ static VALUE rbpod_device_sysinfo_save(VALUE self)
  *
  * Creates an RbPod::Device for a given RbPod::Database. You shouldn't have to call this.
  */
-static VALUE rbpod_device_initialize(VALUE self, VALUE database) {
+static VALUE rbpod_device_initialize(VALUE self, VALUE database)
+{
     Itdb_iTunesDB *_database = TYPED_DATA_PTR(database, Itdb_iTunesDB);
 
     /* Make sure we were given an instance of a RbPod::Database. */

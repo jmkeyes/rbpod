@@ -102,6 +102,27 @@ static VALUE rbpod_playlist_name_get(VALUE self)
     return rb_str_new2(playlist->name);
 }
 
+/*
+ * call-seq:
+ *     <=>(other) -> Integer
+ *
+ * Compares two playlists based on their names.
+ */
+static VALUE rbpod_playlist_compare(VALUE self, VALUE other)
+{
+    VALUE this_playlist_name, other_playlist_name;
+
+    if (rb_class_of(other) != cRbPodPlaylist) {
+        rb_raise(eRbPodError, "Can't compare a Playlist with %s", StringValueCStr(other));
+        return Qnil;
+    }
+
+    this_playlist_name  = rbpod_playlist_name_get(self);
+    other_playlist_name = rbpod_playlist_name_get(other);
+
+    return rb_str_cmp(this_playlist_name, other_playlist_name);
+}
+
 static VALUE rbpod_playlist_id_get(VALUE self)
 {
     Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
@@ -149,7 +170,7 @@ static VALUE rbpod_playlist_allocate(VALUE self)
 void Init_rbpod_playlist(void)
 {
 #if RDOC_CAN_PARSE_DOCUMENTATION
-     mRbPod = rb_define_module("RbPod");
+    mRbPod = rb_define_module("RbPod");
 #endif
     cRbPodPlaylist = rb_define_class_under(mRbPod, "Playlist", rb_cObject);
 
@@ -158,6 +179,8 @@ void Init_rbpod_playlist(void)
     rb_define_method(cRbPodPlaylist, "initialize", rbpod_playlist_initialize, 2);
 
     rb_define_private_method(cRbPodPlaylist, "id", rbpod_playlist_id_get, 0);
+
+    rb_define_method(cRbPodPlaylist, "<=>", rbpod_playlist_compare, 1);
 
     rb_define_method(cRbPodPlaylist, "name", rbpod_playlist_name_get, 0);
     rb_define_method(cRbPodPlaylist, "length", rbpod_playlist_length_get, 0);

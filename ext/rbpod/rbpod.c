@@ -43,7 +43,8 @@ inline VALUE rbpod_raise_error(GError *error)
  * A shortcut for creating an RbPod::Database instance from a mount point.
  *
  */
-static VALUE rbpod_load_database(VALUE self, VALUE mount_point) {
+static VALUE rbpod_load_database(VALUE self, VALUE mount_point)
+{
     return rb_class_new_instance(1, &mount_point, cRbPodDatabase);
 }
 

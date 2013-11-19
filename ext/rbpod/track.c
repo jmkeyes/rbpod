@@ -29,8 +29,9 @@ static VALUE rbpod_track_path_get(VALUE self)
     const gchar *ipod_path = NULL;
 
     /* Never hurts to be careful, right? */
-    if (database == NULL || track->ipod_path == NULL)
+    if (database == NULL || track->ipod_path == NULL) {
         return Qnil;
+    }
 
     /* Skip the prepended directory separator. */
     ipod_path  = (const gchar *) &track->ipod_path[1];
@@ -121,8 +122,9 @@ static void rbpod_track_deallocate(void *handle)
     Itdb_Track *track = (Itdb_Track *) handle;
 
     /* Don't free tracks that are assigned to a playlist/database. */
-    if (track->itdb == NULL || track->id == 0)
+    if (track->itdb == NULL || track->id == 0) {
         itdb_track_free((Itdb_Track *) handle);
+    }
 
     return;
 }

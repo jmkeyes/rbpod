@@ -17,15 +17,35 @@ static VALUE rbpod_track_transferred_p(VALUE self)
 
 /*
  * call-seq:
- *     ipod_path() -> String
+ *     file_path() -> String
  *
  * Returns the full path to the file backing this track on the device.
  */
-static VALUE rbpod_track_ipod_path_get(VALUE self)
+static VALUE rbpod_track_file_path_get(VALUE self)
 {
     Itdb_Track *track = TYPED_DATA_PTR(self, Itdb_Track);
-    /* TODO: For some reason track->ipod_path uses ':' as a directory separator. */
-    return rb_str_new2(track->ipod_path);
+    VALUE mount_point, path_parts, file_path;
+    Itdb_iTunesDB *database = track->itdb;
+    const gchar *ipod_path = NULL;
+
+    /* Never hurts to be careful, right? */
+    if (database == NULL || track->ipod_path == NULL)
+        return Qnil;
+
+    /* Skip the prepended directory separator. */
+    ipod_path  = (const gchar *) &track->ipod_path[1];
+
+    /* Extract the iPod mount point from the database pointer. */
+    mount_point = rb_str_new2(itdb_get_mountpoint(database));
+
+    /* Split the track's ipod_path by ':' character. */
+    path_parts = rb_str_split(rb_str_new2(ipod_path), ":");
+
+    /* Use File.join to rejoin the path safely. */
+    file_path = rb_funcall2(rb_cFile, rb_intern("join"), 1, &path_parts);
+
+    /* Return the expanded absolute path name. */
+    return rb_file_expand_path(file_path, mount_point);
 }
 
 /*
@@ -122,7 +142,7 @@ void Init_rbpod_track(void)
     rb_define_method(cRbPodTrack, "album", rbpod_track_album_get, 0);
     rb_define_method(cRbPodTrack, "artist", rbpod_track_artist_get, 0);
     rb_define_method(cRbPodTrack, "file_type", rbpod_track_file_type_get, 0);
-    rb_define_method(cRbPodTrack, "ipod_path", rbpod_track_ipod_path_get, 0);
+    rb_define_method(cRbPodTrack, "file_path", rbpod_track_file_path_get, 0);
 
     rb_define_method(cRbPodTrack, "transferred?", rbpod_track_transferred_p, 0);
 

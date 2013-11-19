@@ -35,11 +35,10 @@ end
 
 desc "Build all RDoc documentation."
 RDoc::Task.new(:rdoc) do |task|
- task.main = 'README.md'
- task.markup = 'markdown'
- task.rdoc_files.include("README.md", 'lib/**/*.rb', 'ext/**/*.[ch]')
- task.options << "--all"
  task.rdoc_dir = 'doc'
+ task.markup   = 'markdown'
+ task.main     = 'README.md'
+ task.rdoc_files.include('README.md', 'lib', 'ext')
 end
 
 desc "Open a console with rbpod preloaded."

@@ -116,7 +116,8 @@ void Init_rbpod_track(void)
 
     rb_define_method(cRbPodTrack, "initialize", rbpod_track_initialize, 0);
 
-    rb_define_method(cRbPodTrack, "id", rbpod_track_id_get, 0);
+    rb_define_private_method(cRbPodTrack, "id", rbpod_track_id_get, 0);
+
     rb_define_method(cRbPodTrack, "title", rbpod_track_title_get, 0);
     rb_define_method(cRbPodTrack, "album", rbpod_track_album_get, 0);
     rb_define_method(cRbPodTrack, "artist", rbpod_track_artist_get, 0);

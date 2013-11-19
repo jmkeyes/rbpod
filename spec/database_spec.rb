@@ -74,16 +74,6 @@ describe RbPod::Database do
       end
     end
 
-    describe '#tracks' do
-      it 'should return a collection' do
-        @database.tracks.should be_instance_of(RbPod::Collection)
-      end
-
-      it 'should have an empty set of tracks' do
-        @database.tracks.length.should == 0
-      end
-    end
-
     describe '#playlists' do
       it 'should return a collection' do
         @database.playlists.should be_instance_of(RbPod::Collection)

@@ -59,7 +59,7 @@ static VALUE rbpod_playlist_timestamp_get(VALUE self)
  *
  * Shuffles the tracks in this playlist in place.
  */
-static VALUE rbpod_playlist_shuffle(VALUE self)
+static VALUE rbpod_playlist_shuffle_bang(VALUE self)
 {
     Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
     itdb_playlist_randomize(playlist);
@@ -119,13 +119,10 @@ static VALUE rbpod_playlist_initialize(VALUE self, VALUE playlist_name, VALUE sm
     Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
     gchar *_playlist_name = StringValueCStr(playlist_name);
 
-    /* Kill off the dummy playlist. */
     itdb_playlist_free(playlist);
 
-    /* Create a new playlist based on the values provided. */
     playlist = itdb_playlist_new(_playlist_name, (smart_playlist == Qtrue) ? TRUE : FALSE);
 
-    /* Store the new playlist. */
     DATA_PTR(self) = playlist;
 
     return self;
@@ -160,12 +157,15 @@ void Init_rbpod_playlist(void)
 
     rb_define_method(cRbPodPlaylist, "initialize", rbpod_playlist_initialize, 2);
 
-    rb_define_method(cRbPodPlaylist, "id", rbpod_playlist_id_get, 0);
+    rb_define_private_method(cRbPodPlaylist, "id", rbpod_playlist_id_get, 0);
+
     rb_define_method(cRbPodPlaylist, "name", rbpod_playlist_name_get, 0);
     rb_define_method(cRbPodPlaylist, "length", rbpod_playlist_length_get, 0);
     rb_define_method(cRbPodPlaylist, "tracks", rbpod_playlist_tracks_get, 0);
-    rb_define_method(cRbPodPlaylist, "shuffle!", rbpod_playlist_shuffle, 0);
-    rb_define_method(cRbPodPlaylist, "created_on", rbpod_playlist_timestamp_get, 0);
+    rb_define_method(cRbPodPlaylist, "shuffle!", rbpod_playlist_shuffle_bang, 0);
+    rb_define_method(cRbPodPlaylist, "timestamp", rbpod_playlist_timestamp_get, 0);
+
+    rb_define_alias(cRbPodPlaylist, "created_on", "timestamp");
 
     rb_define_method(cRbPodPlaylist, "smart_playlist?", rbpod_playlist_smart_p, 0);
     rb_define_method(cRbPodPlaylist, "master_playlist?", rbpod_playlist_master_p, 0);

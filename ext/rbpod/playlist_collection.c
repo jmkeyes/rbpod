@@ -15,22 +15,19 @@ static VALUE rbpod_playlist_collection_get(VALUE self, VALUE key)
     VALUE parent = rbpod_playlist_collection_parent(self);
     Itdb_iTunesDB *database = TYPED_DATA_PTR(parent, Itdb_iTunesDB);
     Itdb_Playlist *playlist = NULL;
+    int key_type = TYPE(key);
 
-    switch (TYPE(key)) {
-    case T_SYMBOL:
-    case T_STRING:
+    if (key_type == T_SYMBOL || key_type == T_STRING) {
         playlist = itdb_playlist_by_name(database, StringValueCStr(key));
-        break;
-    case T_FIXNUM:
+        return Data_Wrap_Struct(cRbPodPlaylist, NULL, NULL, (void *) playlist);
+    }
+
+    if (key_type == T_FIXNUM) {
         playlist = itdb_playlist_by_nr(database, FIX2INT(key));
-        break;
+        return Data_Wrap_Struct(cRbPodPlaylist, NULL, NULL, (void *) playlist);
     }
 
-    if (playlist == NULL) {
-        return Qnil;
-    }
-
-    return Data_Wrap_Struct(cRbPodPlaylist, NULL, NULL, (void *) playlist);
+    return Qnil;
 }
 
 static VALUE rbpod_playlist_collection_podcasts_get(VALUE self)

@@ -190,12 +190,6 @@ static VALUE rbpod_device_sysinfo_save(VALUE self)
     return Qnil;
 }
 
-static VALUE rbpod_device_initialize(VALUE self)
-{
-    /* Private method, no setup required yet. */
-    return self;
-}
-
 static void rbpod_device_deallocate(void *handle)
 {
     itdb_device_free((Itdb_Device *) handle);
@@ -214,9 +208,6 @@ void Init_rbpod_device(void)
     cRbPodDevice = rb_define_class_under(mRbPod, "Device", rb_cObject);
 
     rb_define_alloc_func(cRbPodDevice, rbpod_device_allocate);
-
-    /* We don't want to explicitly create these, so mark the constructor as private. */
-    rb_define_private_method(cRbPodDevice, "initialize", rbpod_device_initialize, 0);
 
     rb_define_method(cRbPodDevice, "[]", rbpod_device_sysinfo_get, 1);
     rb_define_method(cRbPodDevice, "[]=", rbpod_device_sysinfo_set, 2);

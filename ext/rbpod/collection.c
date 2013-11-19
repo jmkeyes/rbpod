@@ -93,26 +93,25 @@ static VALUE rbpod_collection_length(VALUE self)
  * If no block was supplied, return an enumerator for the collection.
  *
  */
-static VALUE rbpod_collection_each(VALUE self)
+static VALUE rbpod_collection_each(VALUE self, VALUE argv)
 {
     struct collection *collection = TYPED_DATA_PTR(self, struct collection);
+    VALUE item = Qnil, arguments = rb_ary_dup(argv);
     GList *current = NULL;
-    VALUE item;
 
     /* Return an enumerator if a block was not supplied. */
     RETURN_ENUMERATOR(self, 0, 0);
 
+    /* Prepend an empty element as a placeholder. */
+    rb_ary_unshift(arguments, Qnil);
+
     /* If we were supplied a block, enumerate the entire list. */
     for (current = collection->list; current != NULL; current = current->next) {
         item = Data_Wrap_Struct(collection->klass, NULL, NULL, (void *) current->data);
-        rb_yield(item);
+        rb_ary_store(arguments, 0, item);
+        rb_yield_splat(arguments);
     }
 
-    return self;
-}
-
-static VALUE rbpod_collection_initialize(VALUE self)
-{
     return self;
 }
 
@@ -147,13 +146,12 @@ void Init_rbpod_collection(void)
 
     rb_include_module(cRbPodCollection, rb_mEnumerable);
 
-    rb_define_private_method(cRbPodCollection, "initialize", rbpod_collection_initialize, 0);
-
-    rb_define_method(cRbPodCollection, "each", rbpod_collection_each, 0);
+    rb_define_method(cRbPodCollection, "each", rbpod_collection_each, -2);
 
     rb_define_method(cRbPodCollection, "length", rbpod_collection_length, 0);
 
     rb_define_alias(cRbPodCollection,  "size", "length");
+    rb_define_alias(cRbPodCollection,  "count", "length");
 
     rb_define_method(cRbPodCollection, "first", rbpod_collection_first, 0);
     rb_define_method(cRbPodCollection, "last", rbpod_collection_last, 0);

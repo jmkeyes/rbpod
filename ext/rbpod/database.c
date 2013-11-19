@@ -115,7 +115,7 @@ static VALUE rbpod_database_mountpoint_set(VALUE self, VALUE path)
 {
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
     itdb_set_mountpoint(database, StringValueCStr(path));
-    return rbpod_database_mountpoint_get(self);
+    return Qnil;
 }
 
 static void rbpod_database_deallocate(void *handle)
@@ -242,15 +242,16 @@ void Init_rbpod_database(void)
 
     rb_define_singleton_method(cRbPodDatabase, "create!", rbpod_database_create, -1);
 
-    rb_define_method(cRbPodDatabase, "mountpoint", rbpod_database_mountpoint_get, 0);
-    rb_define_method(cRbPodDatabase, "mountpoint=", rbpod_database_mountpoint_set, 1);
+    rb_define_private_method(cRbPodDatabase, "id", rbpod_database_id_get, 0);
+    rb_define_private_method(cRbPodDatabase, "tracks", rbpod_database_tracks_get, 0);
+    rb_define_private_method(cRbPodDatabase, "mountpoint=", rbpod_database_mountpoint_set, 1);
 
-    rb_define_method(cRbPodDatabase, "id", rbpod_database_id_get, 0);
+    rb_define_method(cRbPodDatabase, "mountpoint", rbpod_database_mountpoint_get, 0);
+
     rb_define_method(cRbPodDatabase, "version", rbpod_database_version_get, 0);
     rb_define_method(cRbPodDatabase, "filename", rbpod_database_filename_get, 0);
 
     rb_define_method(cRbPodDatabase, "device", rbpod_database_device_get, 0);
-    rb_define_method(cRbPodDatabase, "tracks", rbpod_database_tracks_get, 0);
     rb_define_method(cRbPodDatabase, "playlists", rbpod_database_playlists_get, 0);
 
     rb_define_method(cRbPodDatabase, "synchronized?", rbpod_database_synchronized_p, 0);

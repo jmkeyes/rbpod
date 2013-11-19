@@ -32,8 +32,13 @@ database.mountpoint    # => "/mnt/ipod/"
 database.filename      # => "/mnt/ipod/iPod_Control/iTunes/iTunesDB"
 database.synchronized? # => true
 ```
+Loading a database is common, so you can also use a shortcut:
 
-If you'd like to create a blank database, you can do that too:
+```ruby
+database = RbPod('/mnt/ipod/')
+```
+
+If you'd like to create a new, blank database you can do that too:
 
 ```ruby
 database = RbPod::Database.create!('/tmp/ipod-blank') # => #<RbPod::Database:0xdeadbeef>

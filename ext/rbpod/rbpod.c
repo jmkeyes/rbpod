@@ -36,6 +36,17 @@ inline VALUE rbpod_raise_error(GError *error)
     return Qnil;
 }
 
+/*
+ * call-seq:
+ *     RbPod(mount_point) -> RbPod::Database
+ *
+ * A shortcut for creating an RbPod::Database instance from a mount point.
+ *
+ */
+static VALUE rbpod_load_database(VALUE self, VALUE mount_point) {
+    return rb_class_new_instance(1, &mount_point, cRbPodDatabase);
+}
+
 void Init_rbpod(void)
 {
     /* This is the wrapper for all RbPod related classes. */
@@ -51,6 +62,8 @@ void Init_rbpod(void)
     Init_rbpod_playlist_collection();
     Init_rbpod_track();
     Init_rbpod_track_collection();
+
+    rb_define_global_function("RbPod", rbpod_load_database, 1);
 
     return;
 }

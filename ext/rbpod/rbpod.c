@@ -23,7 +23,6 @@ VALUE mRbPodPlaylistCollection;
 VALUE cRbPodTrack;
 VALUE mRbPodTrackCollection;
 
-
 inline VALUE rbpod_raise_error(GError *error)
 {
     VALUE error_message;
@@ -39,8 +38,10 @@ inline VALUE rbpod_raise_error(GError *error)
 
 void Init_rbpod(void)
 {
+    /* This is the wrapper for all RbPod related classes. */
     mRbPod = rb_define_module("RbPod");
 
+    /* This is a generic subclass of RuntimeError for RbPod-specific errors.*/
     eRbPodError = rb_define_class_under(mRbPod, "Error", rb_eRuntimeError);
 
     Init_rbpod_database();

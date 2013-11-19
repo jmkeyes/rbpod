@@ -3,36 +3,73 @@
 #include "rbpod.h"
 #include "track.h"
 
+/*
+ * call-seq:
+ *     transferred?() -> Boolean
+ *
+ * Returns true or false if this track has been transferred to the device.
+ */
 static VALUE rbpod_track_transferred_p(VALUE self)
 {
     Itdb_Track *track = TYPED_DATA_PTR(self, Itdb_Track);
     return BooleanValue(track->transferred);
 }
 
+/*
+ * call-seq:
+ *     ipod_path() -> String
+ *
+ * Returns the full path to the file backing this track on the device.
+ */
 static VALUE rbpod_track_ipod_path_get(VALUE self)
 {
     Itdb_Track *track = TYPED_DATA_PTR(self, Itdb_Track);
+    /* TODO: For some reason track->ipod_path uses ':' as a directory separator. */
     return rb_str_new2(track->ipod_path);
 }
 
+/*
+ * call-seq:
+ *     file_type() -> String
+ *
+ * Returns a human-readable string describing the content of the track.
+ */
 static VALUE rbpod_track_file_type_get(VALUE self)
 {
     Itdb_Track *track = TYPED_DATA_PTR(self, Itdb_Track);
     return rb_str_new2(track->filetype);
 }
 
+/*
+ * call-seq:
+ *     artist() -> String
+ *
+ * Returns the artist for the track.
+ */
 static VALUE rbpod_track_artist_get(VALUE self)
 {
     Itdb_Track *track = TYPED_DATA_PTR(self, Itdb_Track);
     return rb_str_new2(track->artist);
 }
 
+/*
+ * call-seq:
+ *     album() -> String
+ *
+ * Returns the album for the track.
+ */
 static VALUE rbpod_track_album_get(VALUE self)
 {
     Itdb_Track *track = TYPED_DATA_PTR(self, Itdb_Track);
     return rb_str_new2(track->album);
 }
 
+/*
+ * call-seq:
+ *     title() -> String
+ *
+ * Returns the title of the track.
+ */
 static VALUE rbpod_track_title_get(VALUE self)
 {
     Itdb_Track *track = TYPED_DATA_PTR(self, Itdb_Track);
@@ -45,6 +82,12 @@ static VALUE rbpod_track_id_get(VALUE self)
     return rb_str_new2(track->filetype);
 }
 
+/*
+ * call-seq:
+ *     initialize() -> RbPod::Track
+ *
+ * Creates a detached track. (Not managed by a database.)
+ */
 static VALUE rbpod_track_initialize(VALUE self)
 {
     return self;

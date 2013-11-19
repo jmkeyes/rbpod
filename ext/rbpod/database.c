@@ -6,6 +6,12 @@
 #include "track_collection.h"
 #include "playlist_collection.h"
 
+/*
+ * call-seq:
+ *     save!() -> RbPod::Database
+ *
+ * Saves any changes made to the database.
+ */
 static VALUE rbpod_database_save(VALUE self)
 {
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
@@ -18,6 +24,12 @@ static VALUE rbpod_database_save(VALUE self)
     return self;
 }
 
+/*
+ * call-seq:
+ *     synchronized?() -> Boolean
+ *
+ * Returns true or false depending if any changes have been made, but not saved.
+ */
 static VALUE rbpod_database_synchronized_p(VALUE self)
 {
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
@@ -25,6 +37,12 @@ static VALUE rbpod_database_synchronized_p(VALUE self)
     return BooleanValue(nontransferred == 0);
 }
 
+/*
+ * call-seq:
+ *     playlists() -> RbPod::Collection
+ *
+ * Returns a collection of all playlists added to this database.
+ */
 static VALUE rbpod_database_playlists_get(VALUE self)
 {
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
@@ -35,23 +53,40 @@ static VALUE rbpod_database_tracks_get(VALUE self)
 {
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
     Itdb_Playlist *playlist = itdb_playlist_mpl(database);
-    /* Use the master playlist as the parent for the master track list. */
     VALUE parent = Data_Wrap_Struct(cRbPodPlaylist, NULL, NULL, (void *) playlist);
     return rbpod_track_collection_create(parent, database->tracks);
 }
 
+/*
+ * call-seq:
+ *     device() -> RbPod::Device
+ *
+ * Returns the device backing this database.
+ */
 static VALUE rbpod_database_device_get(VALUE self)
 {
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
     return rbpod_device_create(database->device);
 }
 
+/*
+ * call-seq:
+ *     filename() -> String
+ *
+ * Returns the path on the file system to the database.
+ */
 static VALUE rbpod_database_filename_get(VALUE self)
 {
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
     return rb_str_new2(database->filename);
 }
 
+/*
+ * call-seq:
+ *     version() -> Fixnum
+ *
+ * Returns the version number of the database.
+ */
 static VALUE rbpod_database_version_get(VALUE self)
 {
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
@@ -64,6 +99,12 @@ static VALUE rbpod_database_id_get(VALUE self)
     return INT2NUM(database->id);
 }
 
+/*
+ * call-seq:
+ *     mountpoint() -> String
+ *
+ * Returns the location of the mount point this database was parsed from.
+ */
 static VALUE rbpod_database_mountpoint_get(VALUE self)
 {
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
@@ -83,6 +124,12 @@ static void rbpod_database_deallocate(void *handle)
     return;
 }
 
+/*
+ * call-seq:
+ *     initialize(mount_point) -> RbPod::Database
+ *
+ * Loads a new database parsed from the given mount point.
+ */
 static VALUE rbpod_database_initialize(VALUE self, VALUE mount_point)
 {
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
@@ -111,6 +158,14 @@ static VALUE rbpod_database_allocate(VALUE self)
     return Data_Wrap_Struct(cRbPodDatabase, NULL, rbpod_database_deallocate, (void *) database);
 }
 
+/*
+ * call-seq:
+ *     create!(mount_point) -> RbPod::Database
+ *     create!(mount_point, device_name) -> RbPod::Database
+ *     create!(mount_point, device_name, model_number) -> RbPod::Database
+ *
+ * Creates a new database on the file system and loads it.
+ */
 static VALUE rbpod_database_create(int argc, VALUE *argv, VALUE self)
 {
     VALUE mount_point, device_name, model_number, instance;

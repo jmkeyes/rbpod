@@ -1,5 +1,6 @@
 # Bring in rake with rake-compiler's support.
 require 'rake'
+require 'rake/clean'
 require 'rake/extensiontask'
 
 # Bring in bundler and it's gem tasks.
@@ -13,7 +14,10 @@ require 'rspec/core/rake_task'
 require 'rdoc/task'
 
 # By default, clean, compile and then test.
-task :default => [ :compile, :test ]
+task :default => [ :compile, :test, :rdoc ]
+
+# Let Rake know what is safe to remove.
+CLEAN.include [ 'pkg/*', 'doc/*' ]
 
 desc "Compile the native extension."
 Rake::ExtensionTask.new do |extension|
@@ -35,10 +39,12 @@ end
 
 desc "Build all RDoc documentation."
 RDoc::Task.new(:rdoc) do |task|
- task.rdoc_dir = 'doc'
+ task.rdoc_dir = 'doc/rdoc'
  task.markup   = 'markdown'
  task.main     = 'README.md'
- task.rdoc_files.include('README.md', 'lib', 'ext')
+ task.title    = 'RbPod: Lightweight Ruby bindings to libgpod.'
+ task.rdoc_files.include('README.md', 'lib/**/*.rb', 'ext/**/*.[ch]')
+ task.rdoc_files.exclude('ext/**/*_collection.[ch]')
 end
 
 desc "Open a console with rbpod preloaded."

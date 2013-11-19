@@ -8,36 +8,72 @@ inline VALUE rbpod_device_create(Itdb_Device *device)
     return Data_Wrap_Struct(cRbPodDevice, NULL, NULL, (void *) device);
 }
 
+/*
+ * call-seq:
+ *     supports_chapter_images?() -> Boolean
+ *
+ * Returns true of false if the device supports chapter images.
+ */
 static VALUE rbpod_device_chapter_image_support_p(VALUE self)
 {
     Itdb_Device *device = TYPED_DATA_PTR(self, Itdb_Device);
     return BooleanValue(itdb_device_supports_chapter_image(device));
 }
 
+/*
+ * call-seq:
+ *     supports_podcasts?() -> Boolean
+ *
+ * Returns true of false if the device supports podcasts.
+ */
 static VALUE rbpod_device_podcast_support_p(VALUE self)
 {
     Itdb_Device *device = TYPED_DATA_PTR(self, Itdb_Device);
     return BooleanValue(itdb_device_supports_podcast(device));
 }
 
+/*
+ * call-seq:
+ *     supports_artwork?() -> Boolean
+ *
+ * Returns true of false if the device supports artwork.
+ */
 static VALUE rbpod_device_artwork_support_p(VALUE self)
 {
     Itdb_Device *device = TYPED_DATA_PTR(self, Itdb_Device);
     return BooleanValue(itdb_device_supports_artwork(device));
 }
 
+/*
+ * call-seq:
+ *     supports_videos?() -> Boolean
+ *
+ * Returns true of false if the device supports videos.
+ */
 static VALUE rbpod_device_video_support_p(VALUE self)
 {
     Itdb_Device *device = TYPED_DATA_PTR(self, Itdb_Device);
     return BooleanValue(itdb_device_supports_video(device));
 }
 
+/*
+ * call-seq:
+ *     supports_photos?() -> Boolean
+ *
+ * Returns true of false if the device supports photos.
+ */
 static VALUE rbpod_device_photo_support_p(VALUE self)
 {
     Itdb_Device *device = TYPED_DATA_PTR(self, Itdb_Device);
     return BooleanValue(itdb_device_supports_photo(device));
 }
 
+/*
+ * call-seq:
+ *     model_name() -> String
+ *
+ * Returns the model name of the device.
+ */
 static VALUE rbpod_device_model_name_get(VALUE self)
 {
     Itdb_Device *device = TYPED_DATA_PTR(self, Itdb_Device);
@@ -45,6 +81,12 @@ static VALUE rbpod_device_model_name_get(VALUE self)
     return rb_str_new2(itdb_info_get_ipod_model_name_string(info->ipod_model));
 }
 
+/*
+ * call-seq:
+ *     model_number() -> String
+ *
+ * Returns the model number of the device.
+ */
 static VALUE rbpod_device_model_number_get(VALUE self)
 {
     Itdb_Device *device = TYPED_DATA_PTR(self, Itdb_Device);
@@ -52,6 +94,12 @@ static VALUE rbpod_device_model_number_get(VALUE self)
     return rb_str_new2(info->model_number);
 }
 
+/*
+ * call-seq:
+ *     generation() -> String
+ *
+ * Returns the generation of the device.
+ */
 static VALUE rbpod_device_generation_get(VALUE self)
 {
     Itdb_Device *device = TYPED_DATA_PTR(self, Itdb_Device);
@@ -59,6 +107,12 @@ static VALUE rbpod_device_generation_get(VALUE self)
     return rb_str_new2(itdb_info_get_ipod_generation_string(info->ipod_generation));
 }
 
+/*
+ * call-seq:
+ *     capacity() -> Float
+ *
+ * Returns the capacity of the device in gigabytes (GB).
+ */
 static VALUE rbpod_device_capacity_get(VALUE self)
 {
     Itdb_Device *device = TYPED_DATA_PTR(self, Itdb_Device);
@@ -66,6 +120,12 @@ static VALUE rbpod_device_capacity_get(VALUE self)
     return DBL2NUM(info->capacity);
 }
 
+/*
+ * call-seq:
+ *     uuid() -> String
+ *
+ * Returns the UUID of the device.
+ */
 static VALUE rbpod_device_uuid_get(VALUE self)
 {
     Itdb_Device *device = TYPED_DATA_PTR(self, Itdb_Device);
@@ -73,6 +133,12 @@ static VALUE rbpod_device_uuid_get(VALUE self)
     return (uuid == NULL) ? Qnil : rb_str_new2(uuid);
 }
 
+/*
+ * call-seq:
+ *     [](key) -> String
+ *
+ * Returns the SysInfo entry for the given key, or nil.
+ */
 static VALUE rbpod_device_sysinfo_get(VALUE self, VALUE key)
 {
     Itdb_Device *device = TYPED_DATA_PTR(self, Itdb_Device);
@@ -87,6 +153,12 @@ static VALUE rbpod_device_sysinfo_get(VALUE self, VALUE key)
 
 }
 
+/*
+ * call-seq:
+ *     []=(key, value) -> nil
+ *
+ * Sets the given SysInfo entry to a value and returns nil.
+ */
 static VALUE rbpod_device_sysinfo_set(VALUE self, VALUE key, VALUE value)
 {
     Itdb_Device *device = TYPED_DATA_PTR(self, Itdb_Device);
@@ -100,6 +172,12 @@ static VALUE rbpod_device_sysinfo_set(VALUE self, VALUE key, VALUE value)
     return Qnil;
 }
 
+/*
+ * call-seq:
+ *     save!() -> nil
+ *
+ * Writes the SysInfo data back to the device. Call this if you change any entries.
+ */
 static VALUE rbpod_device_sysinfo_save(VALUE self)
 {
     Itdb_Device *device = TYPED_DATA_PTR(self, Itdb_Device);

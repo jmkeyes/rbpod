@@ -16,6 +16,12 @@ inline VALUE rbpod_collection_create(GList *list, VALUE type)
     return Data_Wrap_Struct(cRbPodCollection, NULL, NULL, (void *) collection);
 }
 
+/*
+ * call-seq:
+ *     [](index) -> Object or nil
+ *
+ * Return the item located at the given position in the list.
+ */
 static VALUE rbpod_collection_get(VALUE self, VALUE key)
 {
     struct collection *collection = TYPED_DATA_PTR(self, struct collection);
@@ -30,6 +36,12 @@ static VALUE rbpod_collection_get(VALUE self, VALUE key)
     return Data_Wrap_Struct(collection->klass, NULL, NULL, (void *) current->data);
 }
 
+/*
+ * call-seq:
+ *     last() -> Object
+ *
+ * Return the last item of the collection.
+ */
 static VALUE rbpod_collection_last(VALUE self)
 {
     struct collection *collection = TYPED_DATA_PTR(self, struct collection);
@@ -42,6 +54,12 @@ static VALUE rbpod_collection_last(VALUE self)
     return Data_Wrap_Struct(collection->klass, NULL, NULL, (void *) current->data);
 }
 
+/*
+ * call-seq:
+ *     first() -> Object
+ *
+ * Return the first item of the collection.
+ */
 static VALUE rbpod_collection_first(VALUE self)
 {
     struct collection *collection = TYPED_DATA_PTR(self, struct collection);
@@ -54,12 +72,27 @@ static VALUE rbpod_collection_first(VALUE self)
     return Data_Wrap_Struct(collection->klass, NULL, NULL, (void *) current->data);
 }
 
+/*
+ * call-seq:
+ *     length() -> Integer
+ *
+ * Return the total length of all items in the collection.
+ */
 static VALUE rbpod_collection_length(VALUE self)
 {
     struct collection *collection = TYPED_DATA_PTR(self, struct collection);
     return INT2NUM(g_list_length(collection->list));
 }
 
+/*
+ * call-seq:
+ *     each(*args) -> Enumerator
+ *     each(*args) { |item| block } -> Enumerator
+ *
+ * Iterate over the collection, passing each item to a given block.
+ * If no block was supplied, return an enumerator for the collection.
+ *
+ */
 static VALUE rbpod_collection_each(VALUE self)
 {
     struct collection *collection = TYPED_DATA_PTR(self, struct collection);

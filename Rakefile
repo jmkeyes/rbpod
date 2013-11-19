@@ -14,7 +14,7 @@ require 'rspec/core/rake_task'
 require 'rdoc/task'
 
 # By default, clean, compile and then test.
-task :default => [ :compile, :test, :rdoc ]
+task :default => [ :compile, :test ]
 
 # Let Rake know what is safe to remove.
 CLEAN.include [ 'pkg/*', 'doc/*' ]
@@ -42,7 +42,7 @@ RDoc::Task.new(:rdoc) do |task|
  task.rdoc_dir = 'doc/rdoc'
  task.markup   = 'markdown'
  task.main     = 'README.md'
- task.title    = 'RbPod: Lightweight Ruby bindings to libgpod.'
+ task.title    = 'RbPod: Lightweight Ruby bindings to libgpod'
  task.rdoc_files.include('README.md', 'lib/**/*.rb', 'ext/**/*.[ch]')
  task.rdoc_files.exclude('ext/**/*_collection.[ch]')
 end

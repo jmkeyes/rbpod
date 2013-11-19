@@ -168,9 +168,8 @@ static VALUE rbpod_database_allocate(VALUE self)
  */
 static VALUE rbpod_database_create(int argc, VALUE *argv, VALUE self)
 {
-    VALUE mount_point, device_name, model_number, instance;
     gchar *_mount_point, *_device_name, *_model_number;
-    GDir *directory = NULL;
+    VALUE mount_point, device_name, model_number;
     GError *error = NULL;
 
     if (rb_scan_args(argc, argv, "12", &mount_point, &device_name, &model_number) < 1) {
@@ -178,21 +177,18 @@ static VALUE rbpod_database_create(int argc, VALUE *argv, VALUE self)
         return Qnil;
     }
 
-    /* Reject the mount point immediately if it isn't a string. */
-    if (TYPE(mount_point) != T_STRING && RSTRING_LEN(mount_point) > 0) {
-        rb_raise(eRbPodError, "Mount point must be a non-empty string.");
+    /* Check if the mount point is a directory. */
+    if (rb_file_directory_p(rb_cFile, mount_point) != Qtrue) {
+        rb_raise(eRbPodError, "The mount point must be a directory!");
         return Qnil;
     }
 
     /* If we didn't specify a device name, default to 'iPod'. */
-    if (NIL_P(device_name) == TRUE) {
-        device_name = rb_str_new2("iPod");
-    }
-
-    /* If the specified device name isn't a string of at least three characters, bail now. */
-    if (TYPE(device_name) != T_STRING || RSTRING_LEN(device_name) < 3) {
+    if (RTEST(device_name) && (TYPE(device_name) != T_STRING || RSTRING_LEN(device_name) < 4)) {
         rb_raise(eRbPodError, "Device name should be a string of at least three characters.");
         return Qnil;
+    } else {
+        device_name = rb_str_new2("iPod");
     }
 
     /* If the specified model number is specified but isn't a string, bail now. TODO: Use a regexp, stupid. */
@@ -208,25 +204,13 @@ static VALUE rbpod_database_create(int argc, VALUE *argv, VALUE self)
     /* GPod can function with a NULL model number, however, artwork may not function properly. */
     _model_number = !NIL_P(model_number) ? StringValueCStr(model_number) : NULL;
 
-    /* Check if the mount point is a directory. */
-    directory = g_dir_open(_mount_point, 0, &error);
-
-    if (directory == NULL) {
-        return rbpod_raise_error(error);
-    }
-
-    /* Glib seems to think so... */
-    g_dir_close(directory);
-
     /* Initialize the iPod at this mount point, with this device name and model number. */
     if (itdb_init_ipod(_mount_point, _model_number, _device_name, &error) == FALSE) {
         return rbpod_raise_error(error);
     }
 
-    instance = rbpod_database_allocate(cRbPodDatabase);
-
     /* Return an instance of this class using the newly created database. */
-    return rbpod_database_initialize(instance, mount_point);
+    return rb_class_new_instance(1, &mount_point, cRbPodDatabase);
 }
 
 void Init_rbpod_database(void)

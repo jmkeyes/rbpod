@@ -24,7 +24,7 @@ static VALUE rbpod_track_transferred_p(VALUE self)
 static VALUE rbpod_track_file_path_get(VALUE self)
 {
     Itdb_Track *track = TYPED_DATA_PTR(self, Itdb_Track);
-    VALUE mount_point, path_parts, file_path;
+    VALUE mount_point, path_parts, file_path, full_path;
     Itdb_iTunesDB *database = track->itdb;
     const gchar *ipod_path = NULL;
 
@@ -44,8 +44,11 @@ static VALUE rbpod_track_file_path_get(VALUE self)
     /* Use File.join to rejoin the path safely. */
     file_path = rb_funcall2(rb_cFile, rb_intern("join"), 1, &path_parts);
 
-    /* Return the expanded absolute path name. */
-    return rb_file_expand_path(file_path, mount_point);
+    /* Retrieve the expanded absolute path name. */
+    full_path = rb_file_expand_path(file_path, mount_point);
+
+    /* Return a Pathname instance for the resolved path. */
+    return rb_class_new_instance(1, &full_path, rb_const_get(rb_cObject, rb_intern("Pathname")));
 }
 
 /*

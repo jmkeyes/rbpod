@@ -115,7 +115,12 @@ static VALUE rbpod_track_initialize(VALUE self)
 
 static void rbpod_track_deallocate(void *handle)
 {
-    itdb_track_free((Itdb_Track *) handle);
+    Itdb_Track *track = (Itdb_Track *) handle;
+
+    /* Don't free tracks that are assigned to a playlist/database. */
+    if (track->itdb == NULL || track->id == 0)
+        itdb_track_free((Itdb_Track *) handle);
+
     return;
 }
 

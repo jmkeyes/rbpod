@@ -77,7 +77,8 @@ static VALUE rbpod_database_device_get(VALUE self)
 static VALUE rbpod_database_filename_get(VALUE self)
 {
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
-    return rb_str_new2(database->filename);
+    VALUE file_path = rb_str_new2(database->filename);
+    return rb_class_new_instance(1, &file_path, rb_cPathname);
 }
 
 /*
@@ -107,7 +108,8 @@ static VALUE rbpod_database_id_get(VALUE self)
 static VALUE rbpod_database_mountpoint_get(VALUE self)
 {
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
-    return rb_str_new2(itdb_get_mountpoint(database));
+    VALUE mount_point = rb_str_new2(itdb_get_mountpoint(database));
+    return rb_class_new_instance(1, &mount_point, rb_cPathname);
 }
 
 static VALUE rbpod_database_mountpoint_set(VALUE self, VALUE path)

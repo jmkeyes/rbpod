@@ -52,7 +52,7 @@ describe RbPod::Database do
 
     describe '#mountpoint' do
       it 'should match the mount point it was loaded from' do
-        @database.mountpoint.should == @directory
+        @database.mountpoint.to_s.should == @directory
       end
     end
 

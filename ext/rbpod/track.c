@@ -49,7 +49,7 @@ static VALUE rbpod_track_path_get(VALUE self)
     full_path = rb_file_expand_path(file_path, mount_point);
 
     /* Return a Pathname instance for the resolved path. */
-    return rb_class_new_instance(1, &full_path, rb_const_get(rb_cObject, rb_intern("Pathname")));
+    return rb_class_new_instance(1, &full_path, rb_cPathname);
 }
 
 /*

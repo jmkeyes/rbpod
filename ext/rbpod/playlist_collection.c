@@ -50,7 +50,6 @@ inline VALUE rbpod_playlist_collection_create(VALUE parent, GList *items)
 {
     VALUE collection = rbpod_collection_create(items, cRbPodPlaylist);
     rb_extend_object(collection, mRbPodPlaylistCollection);
-    rb_extend_object(collection, rb_mComparable);
     rb_iv_set(collection, "@parent", parent);
     return collection;
 }

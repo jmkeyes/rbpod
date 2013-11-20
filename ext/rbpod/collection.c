@@ -145,6 +145,7 @@ void Init_rbpod_collection(void)
     rb_define_alloc_func(cRbPodCollection, rbpod_collection_allocate);
 
     rb_include_module(cRbPodCollection, rb_mEnumerable);
+    rb_include_module(cRbPodCollection, rb_mComparable);
 
     rb_define_method(cRbPodCollection, "each", rbpod_collection_each, -2);
 

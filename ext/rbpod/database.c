@@ -8,7 +8,7 @@
 
 /*
  * call-seq:
- *     save!() -> RbPod::Database
+ *     save!() -> nil
  *
  * Saves any changes made to the database.
  */
@@ -21,7 +21,7 @@ static VALUE rbpod_database_save(VALUE self)
         return rbpod_raise_error(error);
     }
 
-    return self;
+    return Qnil;
 }
 
 /*

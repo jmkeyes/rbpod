@@ -6,7 +6,7 @@
 
 /*
  * call-seq:
- *     podcast_playlist?() -> Boolean
+ *     is_podcast_playlist?() -> Boolean
  *
  * Returns true or false if this playlist is the podcast-only playlist.
  */
@@ -18,7 +18,7 @@ static VALUE rbpod_playlist_podcast_p(VALUE self)
 
 /*
  * call-seq:
- *     master_playlist?() -> Boolean
+ *     is_master_playlist?() -> Boolean
  *
  * Returns true or false if this playlist is the master playlist.
  */
@@ -30,7 +30,7 @@ static VALUE rbpod_playlist_master_p(VALUE self)
 
 /*
  * call-seq:
- *     smart_playlist?() -> Boolean
+ *     is_smart_playlist?() -> Boolean
  *
  * Returns true or false if this playlist is a smart playlist.
  */
@@ -190,9 +190,9 @@ void Init_rbpod_playlist(void)
 
     rb_define_alias(cRbPodPlaylist, "created_on", "timestamp");
 
-    rb_define_method(cRbPodPlaylist, "smart_playlist?", rbpod_playlist_smart_p, 0);
-    rb_define_method(cRbPodPlaylist, "master_playlist?", rbpod_playlist_master_p, 0);
-    rb_define_method(cRbPodPlaylist, "podcast_playlist?", rbpod_playlist_podcast_p, 0);
+    rb_define_method(cRbPodPlaylist, "is_smart_playlist?", rbpod_playlist_smart_p, 0);
+    rb_define_method(cRbPodPlaylist, "is_master_playlist?", rbpod_playlist_master_p, 0);
+    rb_define_method(cRbPodPlaylist, "is_podcast_playlist?", rbpod_playlist_podcast_p, 0);
 
     return;
 }

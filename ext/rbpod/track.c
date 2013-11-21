@@ -100,10 +100,16 @@ static VALUE rbpod_track_title_get(VALUE self)
     return rb_str_new2(track->title);
 }
 
+/*
+ * call-seq:
+ *     id() -> Fixnum
+ *
+ * Returns the internal ID number for this track. Do not use this method.
+ */
 static VALUE rbpod_track_id_get(VALUE self)
 {
     Itdb_Track *track = TYPED_DATA_PTR(self, Itdb_Track);
-    return rb_str_new2(track->filetype);
+    return INT2NUM(track->id);
 }
 
 /*

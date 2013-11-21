@@ -81,7 +81,7 @@ describe RbPod::Database do
 
       it 'should have a single master playlist' do
         @database.playlists.length.should eq(1)
-        @database.playlists.first.should be_master_playlist
+        @database.playlists.first.is_master_playlist?.should be_true
       end
     end
   end

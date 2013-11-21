@@ -44,7 +44,6 @@ RDoc::Task.new(:rdoc) do |task|
  task.main     = 'README.md'
  task.title    = 'RbPod: Lightweight Ruby bindings to libgpod'
  task.rdoc_files.include('README.md', 'lib/**/*.rb', 'ext/**/*.[ch]')
- task.rdoc_files.exclude('ext/**/*_collection.[ch]')
 end
 
 desc "Open a console with rbpod preloaded."

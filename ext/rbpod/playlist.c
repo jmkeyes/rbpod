@@ -123,6 +123,12 @@ static VALUE rbpod_playlist_compare(VALUE self, VALUE other)
     return rb_str_cmp(this_playlist_name, other_playlist_name);
 }
 
+/*
+ * call-seq:
+ *     id() -> Fixnum
+ *
+ * Returns the internal ID number for this playlist. Do not use this method.
+ */
 static VALUE rbpod_playlist_id_get(VALUE self)
 {
     Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);

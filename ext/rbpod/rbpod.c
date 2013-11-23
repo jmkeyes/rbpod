@@ -43,9 +43,6 @@ void Init_rbpod(void)
     /* This is the wrapper for all RbPod related classes. */
     mRbPod = rb_define_module("RbPod");
 
-
-    rb_cPathname = rb_const_get(rb_cObject, rb_intern("Pathname"));
-
     Init_rbpod_error();
     Init_rbpod_database();
     Init_rbpod_device();
@@ -56,6 +53,8 @@ void Init_rbpod(void)
     Init_rbpod_track_collection();
 
     rb_define_global_function("RbPod", rbpod_load_database, 1);
+
+    rb_cPathname = rb_const_get(rb_cObject, rb_intern("Pathname"));
 
     return;
 }

@@ -1,6 +1,7 @@
 /* device.c */
 
 #include "rbpod.h"
+#include "error.h"
 #include "device.h"
 #include "database.h"
 

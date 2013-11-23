@@ -15,6 +15,6 @@ RUBY_EXTERN VALUE eRbPodError;
 
 RUBY_EXTERN VALUE rb_cPathname;
 
-inline VALUE rbpod_raise_error(GError *error);
+inline VALUE rb_class_new_instance_with_data(int argc, VALUE *argv, VALUE class, void *handle);
 
 #endif /* RBPOD_H */

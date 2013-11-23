@@ -1,6 +1,7 @@
 /* database.c */
 
 #include "rbpod.h"
+#include "error.h"
 #include "device.h"
 #include "database.h"
 #include "track_collection.h"

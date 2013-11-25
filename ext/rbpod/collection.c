@@ -3,37 +3,28 @@
 #include "rbpod.h"
 #include "collection.h"
 
-struct collection {
-    VALUE klass;
-    GList *list;
-};
-
-inline VALUE rbpod_collection_create(GList *list, VALUE type)
-{
-    struct collection *collection = ALLOC(struct collection);
-    collection->list  = list;
-    collection->klass = type;
-    return Data_Wrap_Struct(cRbPodCollection, NULL, NULL, (void *) collection);
-}
-
 /*
  * call-seq:
  *     [](index) -> Object or nil
  *
- * Return the item located at the given position in the list.
+ * Given an integer +index+, return the item at that position in the collection.
  */
 static VALUE rbpod_collection_get(VALUE self, VALUE key)
 {
-    struct collection *collection = TYPED_DATA_PTR(self, struct collection);
-    GList *current = NULL;
+    GList *current = NULL, *collection = TYPED_DATA_PTR(self, GList);
+    VALUE klass = rb_funcall(self, rb_intern("type"), 0);
 
     if (FIXNUM_P(key) == FALSE) {
         return Qnil;
     }
 
-    current = g_list_nth(collection->list, FIX2INT(key));
+    current = g_list_nth(collection, FIX2INT(key));
 
-    return Data_Wrap_Struct(collection->klass, NULL, NULL, (void *) current->data);
+    if (current == NULL) {
+        return Qnil;
+    }
+
+    return rb_class_new_instance_with_data(0, NULL, klass, current->data);
 }
 
 /*
@@ -44,14 +35,15 @@ static VALUE rbpod_collection_get(VALUE self, VALUE key)
  */
 static VALUE rbpod_collection_last(VALUE self)
 {
-    struct collection *collection = TYPED_DATA_PTR(self, struct collection);
-    GList *current = g_list_last(collection->list);
+    VALUE klass = rb_funcall(self, rb_intern("type"), 0);
+    GList *collection = TYPED_DATA_PTR(self, GList);
+    GList *current = g_list_last(collection);
 
     if (current == NULL) {
         return Qnil;
     }
 
-    return Data_Wrap_Struct(collection->klass, NULL, NULL, (void *) current->data);
+    return rb_class_new_instance_with_data(0, NULL, klass, current->data);
 }
 
 /*
@@ -62,26 +54,27 @@ static VALUE rbpod_collection_last(VALUE self)
  */
 static VALUE rbpod_collection_first(VALUE self)
 {
-    struct collection *collection = TYPED_DATA_PTR(self, struct collection);
-    GList *current = g_list_first(collection->list);
+    VALUE klass = rb_funcall(self, rb_intern("type"), 0);
+    GList *collection = TYPED_DATA_PTR(self, GList);
+    GList *current = g_list_first(collection);
 
     if (current == NULL) {
         return Qnil;
     }
 
-    return Data_Wrap_Struct(collection->klass, NULL, NULL, (void *) current->data);
+    return rb_class_new_instance_with_data(0, NULL, klass, current->data);
 }
 
 /*
  * call-seq:
- *     length() -> Integer
+ *     size() -> Integer
  *
  * Return the total length of all items in the collection.
  */
-static VALUE rbpod_collection_length(VALUE self)
+static VALUE rbpod_collection_size(VALUE self)
 {
-    struct collection *collection = TYPED_DATA_PTR(self, struct collection);
-    return INT2NUM(g_list_length(collection->list));
+    GList *collection = TYPED_DATA_PTR(self, GList);
+    return INT2NUM(g_list_length(collection));
 }
 
 /*
@@ -95,19 +88,24 @@ static VALUE rbpod_collection_length(VALUE self)
  */
 static VALUE rbpod_collection_each(VALUE self, VALUE argv)
 {
-    struct collection *collection = TYPED_DATA_PTR(self, struct collection);
-    VALUE item = Qnil, arguments = rb_ary_dup(argv);
-    GList *current = NULL;
+    GList *current = NULL, *collection = TYPED_DATA_PTR(self, GList);
+    VALUE klass, item, arguments;
 
     /* Return an enumerator if a block was not supplied. */
     RETURN_ENUMERATOR(self, 0, 0);
+
+    /* What sort of items are we casting this data to? */
+    klass = rb_funcall(self, rb_intern("type"), 0);
+
+    /* Create a shallow copy of the passed arguments. */
+    arguments = rb_ary_dup(argv);
 
     /* Prepend an empty element as a placeholder. */
     rb_ary_unshift(arguments, Qnil);
 
     /* If we were supplied a block, enumerate the entire list. */
-    for (current = collection->list; current != NULL; current = current->next) {
-        item = Data_Wrap_Struct(collection->klass, NULL, NULL, (void *) current->data);
+    for (current = collection; current != NULL; current = g_list_next(current)) {
+        item = rb_class_new_instance_with_data(0, NULL, klass, current->data);
         rb_ary_store(arguments, 0, item);
         rb_yield_splat(arguments);
     }
@@ -115,24 +113,22 @@ static VALUE rbpod_collection_each(VALUE self, VALUE argv)
     return self;
 }
 
-static void rbpod_collection_deallocate(void *handle)
+static VALUE rbpod_collection_type(VALUE self)
 {
-    struct collection *collection = (struct collection *) handle;
-
-    if (collection->list != NULL) {
-        g_list_free(collection->list);
-    }
-
-    xfree(handle);
-    return;
+    /* We should get an error if we try to create an instance of NilClass. */
+    return Qnil;
 }
 
-static VALUE rbpod_collection_allocate(VALUE self)
+static VALUE rbpod_collection_included(VALUE self, VALUE other)
 {
-    struct collection *collection = ALLOC(struct collection);
-    collection->list = NULL;
-    collection->klass = Qnil;
-    return Data_Wrap_Struct(cRbPodCollection, NULL, rbpod_collection_deallocate, (void *) collection);
+    /* Collections should be Enumerable and Comparable. */
+    rb_extend_object(other, rb_mEnumerable);
+    rb_extend_object(other, rb_mComparable);
+
+    /* Override Enumerable with our methods. */
+    rb_extend_object(other, self);
+
+    return self;
 }
 
 void Init_rbpod_collection(void)
@@ -140,22 +136,17 @@ void Init_rbpod_collection(void)
 #if RDOC_CAN_PARSE_DOCUMENTATION
     mRbPod = rb_define_module("RbPod");
 #endif
-    cRbPodCollection = rb_define_class_under(mRbPod, "Collection", rb_cObject);
+    mRbPodCollection = rb_define_module_under(mRbPod, "Collection");
 
-    rb_define_alloc_func(cRbPodCollection, rbpod_collection_allocate);
+    rb_define_singleton_method(mRbPodCollection, "included", rbpod_collection_included, 1);
 
-    rb_include_module(cRbPodCollection, rb_mEnumerable);
-    rb_include_module(cRbPodCollection, rb_mComparable);
+    rb_define_private_method(mRbPodCollection, "type", rbpod_collection_type, 0);
 
-    rb_define_method(cRbPodCollection, "each", rbpod_collection_each, -2);
+    rb_define_method(mRbPodCollection, "each", rbpod_collection_each, -2);
+    rb_define_method(mRbPodCollection, "size", rbpod_collection_size, 0);
 
-    rb_define_method(cRbPodCollection, "length", rbpod_collection_length, 0);
+    rb_define_method(mRbPodCollection, "first", rbpod_collection_first, 0);
+    rb_define_method(mRbPodCollection, "last", rbpod_collection_last, 0);
 
-    rb_define_alias(cRbPodCollection,  "size", "length");
-    rb_define_alias(cRbPodCollection,  "count", "length");
-
-    rb_define_method(cRbPodCollection, "first", rbpod_collection_first, 0);
-    rb_define_method(cRbPodCollection, "last", rbpod_collection_last, 0);
-
-    rb_define_method(cRbPodCollection, "[]", rbpod_collection_get, 1);
+    rb_define_method(mRbPodCollection, "[]", rbpod_collection_get, 1);
 }

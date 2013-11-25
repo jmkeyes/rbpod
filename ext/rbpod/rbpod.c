@@ -16,13 +16,13 @@ VALUE eRbPodError;
 VALUE cRbPodDatabase;
 VALUE cRbPodDevice;
 
-VALUE cRbPodCollection;
-
-VALUE cRbPodPlaylist;
-VALUE mRbPodPlaylistCollection;
-
 VALUE cRbPodTrack;
-VALUE mRbPodTrackCollection;
+VALUE cRbPodPlaylist;
+
+VALUE mRbPodCollection;
+
+VALUE cRbPodTrackCollection;
+VALUE cRbPodPlaylistCollection;
 
 VALUE rb_cPathname;
 

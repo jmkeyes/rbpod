@@ -3,12 +3,8 @@
 #ifndef RBPOD_TRACK_COLLECTION_H
 #define RBPOD_TRACK_COLLECTION_H
 
-#include "track.h"
-
-RUBY_EXTERN VALUE mRbPodTrackCollection;
+RUBY_EXTERN VALUE cRbPodTrackCollection;
 
 void Init_rbpod_track_collection(void);
-
-inline VALUE rbpod_track_collection_create(VALUE parent, GList *items);
 
 #endif /* RBPOD_TRACK_COLLECTION_H */

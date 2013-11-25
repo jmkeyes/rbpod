@@ -7,21 +7,13 @@
 
 /*
  * call-seq:
- *     playlist() -> RbPod::Playlist
+ *     initialize(playlist) -> RbPod::TrackCollection
  *
- * The playlist from which this collection of tracks is attached to.
+ * Given an RbPod::Playlist +playlist+, returns a collection of tracks within the playlist.
  */
-static VALUE rbpod_track_collection_playlist(VALUE self)
+static VALUE rbpod_track_collection_initialize(VALUE self, VALUE playlist)
 {
-    return rb_iv_get(self, "@pkaylist");
-}
-
-inline VALUE rbpod_track_collection_create(VALUE playlist, GList *items)
-{
-    VALUE collection = rbpod_collection_create(items, cRbPodTrack);
-    rb_extend_object(collection, mRbPodTrackCollection);
-    rb_iv_set(collection, "@playlist", playlist);
-    return collection;
+    return self;
 }
 
 void Init_rbpod_track_collection(void)
@@ -29,10 +21,11 @@ void Init_rbpod_track_collection(void)
 #if RDOC_CAN_PARSE_DOCUMENTATION
     mRbPod = rb_define_module("RbPod");
 #endif
-    /* This module extends any collection of tracks at runtime. */
-    mRbPodTrackCollection = rb_define_module_under(mRbPod, "TrackCollection");
+    cRbPodTrackCollection = rb_define_class_under(mRbPod, "TrackCollection", rb_cObject);
 
-    rb_define_method(mRbPodTrackCollection, "playlist", rbpod_track_collection_playlist, 0);
+    rb_include_module(cRbPodTrackCollection, mRbPodCollection);
+
+    rb_define_method(cRbPodTrackCollection, "initialize", rbpod_track_collection_initialize, 1);
 
     return;
 }

@@ -4,6 +4,7 @@
 #include "error.h"
 #include "device.h"
 #include "database.h"
+#include "playlist.h"
 #include "track_collection.h"
 #include "playlist_collection.h"
 
@@ -40,22 +41,30 @@ static VALUE rbpod_database_synchronized_p(VALUE self)
 
 /*
  * call-seq:
- *     playlists() -> RbPod::Collection
+ *     playlists() -> RbPod::PlaylistCollection
  *
  * Returns a collection of all playlists added to this database.
  */
 static VALUE rbpod_database_playlists_get(VALUE self)
 {
-    Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
-    return rbpod_playlist_collection_create(self, database->playlists);
+    return rb_class_new_instance(1, &self, cRbPodPlaylistCollection);
 }
 
+/*
+ * call-seq:
+ *     tracks() -> RbPod::TrackCollection
+ */
 static VALUE rbpod_database_tracks_get(VALUE self)
 {
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
-    Itdb_Playlist *playlist = itdb_playlist_mpl(database);
-    VALUE parent = Data_Wrap_Struct(cRbPodPlaylist, NULL, NULL, (void *) playlist);
-    return rbpod_track_collection_create(parent, database->tracks);
+    Itdb_Playlist *_playlist = itdb_playlist_mpl(database);
+    VALUE playlist, playlist_name = rb_str_new2(_playlist->name);
+
+    /* TODO: This is awful. RbPod::PlaylistCollection#master should be used instead. */
+    playlist = rb_class_new_instance_with_data(1, &playlist_name, cRbPodPlaylist, _playlist);
+
+    /* Return a collection of tracks on the master playlist. */
+    return rb_class_new_instance(1, &playlist, cRbPodTrackCollection);
 }
 
 /*
@@ -229,7 +238,6 @@ void Init_rbpod_database(void)
     rb_define_singleton_method(cRbPodDatabase, "create!", rbpod_database_create, -1);
 
     rb_define_private_method(cRbPodDatabase, "id", rbpod_database_id_get, 0);
-    rb_define_private_method(cRbPodDatabase, "tracks", rbpod_database_tracks_get, 0);
     rb_define_private_method(cRbPodDatabase, "mountpoint=", rbpod_database_mountpoint_set, 1);
 
     rb_define_method(cRbPodDatabase, "mountpoint", rbpod_database_mountpoint_get, 0);
@@ -238,6 +246,8 @@ void Init_rbpod_database(void)
     rb_define_method(cRbPodDatabase, "filename", rbpod_database_filename_get, 0);
 
     rb_define_method(cRbPodDatabase, "device", rbpod_database_device_get, 0);
+
+    rb_define_method(cRbPodDatabase, "tracks", rbpod_database_tracks_get, 0);
     rb_define_method(cRbPodDatabase, "playlists", rbpod_database_playlists_get, 0);
 
     rb_define_method(cRbPodDatabase, "synchronized?", rbpod_database_synchronized_p, 0);

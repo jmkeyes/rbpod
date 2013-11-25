@@ -74,8 +74,7 @@ static VALUE rbpod_playlist_shuffle_bang(VALUE self)
  */
 static VALUE rbpod_playlist_tracks_get(VALUE self)
 {
-    Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
-    return rbpod_track_collection_create(self, playlist->members);
+    return rb_class_new_instance(1, &self, cRbPodTrackCollection);
 }
 
 /*
@@ -141,17 +140,31 @@ static VALUE rbpod_playlist_id_get(VALUE self)
  *
  * Creates a detached playlist. (Not managed by the database.)
  */
-static VALUE rbpod_playlist_initialize(VALUE self, VALUE playlist_name, VALUE smart_playlist)
+static VALUE rbpod_playlist_initialize(int argc, VALUE *argv, VALUE self)
 {
     Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
-    gchar *_playlist_name = StringValueCStr(playlist_name);
+    VALUE playlist_name, is_smart_playlist;
+    gboolean _is_smart_playlist = FALSE;
+    gchar *_playlist_name = NULL;
 
+    if (rb_scan_args(argc, argv, "11", &playlist_name, &is_smart_playlist) < 1) {
+        rb_raise(eRbPodError, "Invalid arguments.");
+        return Qnil;
+    }
+
+    /* By default, playlists should not be smart. */
+    _is_smart_playlist = (is_smart_playlist == Qtrue) ? TRUE : FALSE;
+
+    /* Ensure we got a String-ish value, or bail. */
+    _playlist_name = StringValueCStr(playlist_name);
+
+    /* Free the old playlist. */
     itdb_playlist_free(playlist);
 
-    playlist = itdb_playlist_new(_playlist_name, (smart_playlist == Qtrue) ? TRUE : FALSE);
+    /* Attach the newly created playlist to this instance. */
+    DATA_PTR(self) = itdb_playlist_new(_playlist_name, _is_smart_playlist);
 
-    DATA_PTR(self) = playlist;
-
+    /* Done. */
     return self;
 }
 
@@ -182,7 +195,7 @@ void Init_rbpod_playlist(void)
 
     rb_define_alloc_func(cRbPodPlaylist, rbpod_playlist_allocate);
 
-    rb_define_method(cRbPodPlaylist, "initialize", rbpod_playlist_initialize, 2);
+    rb_define_method(cRbPodPlaylist, "initialize", rbpod_playlist_initialize, -1);
 
     rb_define_private_method(cRbPodPlaylist, "id", rbpod_playlist_id_get, 0);
 

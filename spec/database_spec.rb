@@ -1,5 +1,5 @@
 describe RbPod::Database do
-  context 'Overall' do
+  context 'Without a new database' do
     describe '.create!' do
       it 'should create an empty default database and load it' do
         within_temporary_directory do |directory|
@@ -33,55 +33,48 @@ describe RbPod::Database do
     end
   end
 
-  context 'Given a blank database' do
-    before do
-      @directory = within_temporary_directory
-      @database  = RbPod::Database.create!(@directory)
-    end
-
-    after do
-      # This is a godawful hack.
-      FileUtils.remove_entry_secure(@directory)
-    end
+  context 'With a new database' do
+    include_context 'a new database'
 
     describe '#initialize' do
       it 'should return a Database instance' do
-        @database.should be_instance_of(RbPod::Database)
+        database.should be_instance_of(RbPod::Database)
       end
     end
 
     describe '#mountpoint' do
       it 'should match the mount point it was loaded from' do
-        @database.mountpoint.to_s.should == @directory
+        database.mountpoint.to_s.should == directory
       end
     end
 
     describe '#filename' do
       it 'should be an existing iTunes database on the file system' do
-        File.exists?(@database.filename).should be_true
+        File.exists?(database.filename).should be_true
       end
     end
 
     describe '#device' do
       it 'should return a Device instance' do
-        @database.device.should be_instance_of(RbPod::Device)
+        database.device.should be_instance_of(RbPod::Device)
       end
     end
 
     describe '#synchronized?' do
       it 'should be marked as synchronized' do
-        @database.should be_synchronized
+        database.should be_synchronized
       end
     end
 
     describe '#playlists' do
-      it 'should return a collection' do
-        @database.playlists.should be_instance_of(RbPod::Collection)
+      it 'should return a playlist collection' do
+        database.playlists.should be_instance_of(RbPod::PlaylistCollection)
       end
+    end
 
-      it 'should have a single master playlist' do
-        @database.playlists.length.should eq(1)
-        @database.playlists.first.is_master_playlist?.should be_true
+    describe '#tracks' do
+      it 'should return a track collection' do
+        database.tracks.should be_instance_of(RbPod::TrackCollection)
       end
     end
   end

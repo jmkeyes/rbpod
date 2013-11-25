@@ -1,39 +1,25 @@
-describe RbPod::Collection do
-  before do
-    @block = proc { |item| nil }
-    @collection = RbPod::Collection.new
+shared_examples_for RbPod::Collection do
+  it 'should be a collection' do
+    collection.should be_kind_of(RbPod::Collection)
   end
 
-  describe '.self' do
-    it 'should include Enumerable' do
-      @collection.class.should include(Enumerable)
-    end
+  it 'should implement #each' do
+    collection.should respond_to(:each)
   end
 
-  describe '#initialize' do
-    it 'should be a Collection instance' do
-      @collection.should be_instance_of(RbPod::Collection)
-    end
+  it 'should implement #size' do
+    collection.should respond_to(:size)
   end
 
-  describe '#each' do
-    it 'should yield to a block and return itself' do
-      @collection.each(&@block).should_not be_nil
-    end
-
-    it 'should return an Enumerator without a block' do
-      @collection.each.should be_kind_of(Enumerator)
-    end
+  it 'should implement #first' do
+    collection.should respond_to(:first)
   end
 
-  describe '#length' do
-    it 'should be zero' do
-      @collection.length.should eq(0)
-    end
+  it 'should implement #last' do
+    collection.should respond_to(:last)
+  end
 
-    it 'should be aliased to #size' do
-      @collection.should respond_to(:size)
-      @collection.size.should eq(0)
-    end
+  it 'should implement #[]' do
+    collection.should respond_to(:[])
   end
 end

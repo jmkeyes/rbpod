@@ -27,7 +27,7 @@ Rake::ExtensionTask.new do |extension|
   extension.lib_dir  = 'lib/rbpod'
 
   # Monitor sources for change tracking.
-  extension.source_pattern = '*.{c,h}'
+  extension.source_pattern = '*.[ch]'
 end
 
 desc "Run all available RSpec tests."

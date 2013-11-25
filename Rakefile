@@ -13,8 +13,8 @@ require 'rspec/core/rake_task'
 # Bring in RDoc's built-in rake task.
 require 'rdoc/task'
 
-# By default, clean, compile and then test.
-task :default => [ :compile, :test ]
+# By default, run rspec tests.
+task :default => [ :test ]
 
 # Let Rake know what is safe to remove.
 CLEAN.include [ 'pkg/*', 'doc/*' ]
@@ -36,6 +36,8 @@ RSpec::Core::RakeTask.new(:test) do |task|
   # Execute ruby with warnings enabled.
   task.ruby_opts = '-w'
 end
+# Make compilation a prerequisite of testing.
+Rake::Task[:test].prerequisites << :compile
 
 desc "Build all RDoc documentation."
 RDoc::Task.new(:rdoc) do |task|

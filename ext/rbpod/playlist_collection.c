@@ -88,12 +88,16 @@ static VALUE rbpod_playlist_collection_podcast(VALUE self)
  */
 static VALUE rbpod_playlist_collection_initialize(VALUE self, VALUE database)
 {
+    Itdb_iTunesDB *_database = TYPED_DATA_PTR(database, Itdb_iTunesDB);
+
     if (rb_obj_is_instance_of(database, cRbPodDatabase) == FALSE) {
         rb_raise(eRbPodError, "Invalid Arguments: Expected RbPod::Database, got %s", StringValueCStr(database));
         return Qnil;
     }
 
     rb_iv_set(self, "@database", database);
+
+    DATA_PTR(self) = _database->playlists;
 
     return self;
 }

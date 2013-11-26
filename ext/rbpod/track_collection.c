@@ -25,12 +25,16 @@ static VALUE rbpod_track_collection_playlist(VALUE self)
  */
 static VALUE rbpod_track_collection_initialize(VALUE self, VALUE playlist)
 {
+    Itdb_Playlist *_playlist = TYPED_DATA_PTR(playlist, Itdb_Playlist);
+
     if (rb_obj_is_instance_of(playlist, cRbPodPlaylist) == FALSE) {
         rb_raise(eRbPodError, "Invalid Arguments: Expected RbPod::Playlist, got %s", StringValueCStr(playlist));
         return Qnil;
     }
 
     rb_iv_set(self, "@playlist", playlist);
+
+    DATA_PTR(self) = _playlist->members;
 
     return self;
 }

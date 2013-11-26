@@ -56,15 +56,9 @@ static VALUE rbpod_database_playlists_get(VALUE self)
  */
 static VALUE rbpod_database_tracks_get(VALUE self)
 {
-    Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
-    Itdb_Playlist *_playlist = itdb_playlist_mpl(database);
-    VALUE playlist, playlist_name = rb_str_new2(_playlist->name);
-
-    /* TODO: This is awful. RbPod::PlaylistCollection#master should be used instead. */
-    playlist = rb_class_new_instance_with_data(1, &playlist_name, cRbPodPlaylist, _playlist);
-
-    /* Return a collection of tracks on the master playlist. */
-    return rb_class_new_instance(1, &playlist, cRbPodTrackCollection);
+    VALUE playlists = rbpod_database_playlists_get(self);
+    VALUE master = rb_funcall(playlists, rb_intern("master"), 0);
+    return rb_class_new_instance(1, &master, cRbPodTrackCollection);
 }
 
 /*

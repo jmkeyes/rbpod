@@ -13,7 +13,50 @@
  */
 static VALUE rbpod_playlist_collection_database(VALUE self)
 {
-    return rb_ivar_get(self, rb_intern("@database"));
+    return rb_iv_get(self, "@database");
+}
+
+/*
+ * call-seq:
+ *     master() -> RbPod::Playlist
+ *
+ * Returns the master playlist from the database.
+ */
+static VALUE rbpod_playlist_collection_master(VALUE self)
+{
+    VALUE master_playlist_name, database = rbpod_playlist_collection_database(self);
+    Itdb_iTunesDB *_database = TYPED_DATA_PTR(database, Itdb_iTunesDB);
+    Itdb_Playlist *_playlist = itdb_playlist_mpl(_database);
+
+    /* Extract the master playlist name from the playlist. */
+    master_playlist_name = rb_str_new2(_playlist->name);
+
+    /* Create a new instance of the master playlist from the data provided. */
+    return rb_class_new_instance_with_data(1, &master_playlist_name, cRbPodPlaylist, _playlist);
+}
+
+/*
+ * call-seq:
+ *     podcast() -> RbPod::Playlist
+ *
+ * Returns the podcast playlist from the database.
+ */
+static VALUE rbpod_playlist_collection_podcast(VALUE self)
+{
+    VALUE podcast_playlist_name, database = rbpod_playlist_collection_database(self);
+    Itdb_iTunesDB *_database = TYPED_DATA_PTR(database, Itdb_iTunesDB);
+    Itdb_Playlist *_playlist = itdb_playlist_podcasts(_database);
+
+    /* If we don't have a podcast playlist, make one. */
+    if (_playlist == NULL) {
+        return Qnil;
+    }
+
+    /* Extract the podcast playlist name from the playlist. */
+    podcast_playlist_name = rb_str_new2(_playlist->name);
+
+    /* Create a new instance of the podcast playlist from the data provided. */
+    return rb_class_new_instance_with_data(1, &podcast_playlist_name, cRbPodPlaylist, _playlist);
 }
 
 /*
@@ -24,7 +67,7 @@ static VALUE rbpod_playlist_collection_database(VALUE self)
  */
 static VALUE rbpod_playlist_collection_initialize(VALUE self, VALUE database)
 {
-    rb_ivar_set(self, rb_intern("@database"), database);
+    rb_iv_set(self, "@database", database);
     return self;
 }
 
@@ -47,6 +90,10 @@ void Init_rbpod_playlist_collection(void)
     rb_define_method(cRbPodPlaylistCollection, "initialize", rbpod_playlist_collection_initialize, 1);
 
     rb_define_method(cRbPodPlaylistCollection, "database", rbpod_playlist_collection_database, 0);
+
+    rb_define_method(cRbPodPlaylistCollection, "master", rbpod_playlist_collection_master, 0);
+
+    rb_define_method(cRbPodPlaylistCollection, "podcast", rbpod_playlist_collection_podcast, 0);
 
     return;
 }

@@ -39,6 +39,11 @@ static VALUE rbpod_track_collection_initialize(VALUE self, VALUE playlist)
     return self;
 }
 
+static VALUE rbpod_track_collection_type(VALUE self)
+{
+    return cRbPodTrack;
+}
+
 void Init_rbpod_track_collection(void)
 {
 #if RDOC_CAN_PARSE_DOCUMENTATION
@@ -49,6 +54,8 @@ void Init_rbpod_track_collection(void)
     rb_real_include_module(cRbPodTrackCollection, mRbPodCollection);
 
     rb_define_method(cRbPodTrackCollection, "initialize", rbpod_track_collection_initialize, 1);
+
+    rb_define_private_method(cRbPodTrackCollection, "type", rbpod_track_collection_type, 0);
 
     rb_define_method(cRbPodTrackCollection, "playlist", rbpod_track_collection_playlist, 0);
 

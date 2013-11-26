@@ -46,10 +46,8 @@ inline VALUE rb_class_new_instance_with_data(int argc, VALUE *argv, VALUE class,
     /* Create a new instance of this class. */
     VALUE instance = rb_class_new_instance(argc, argv, class);
 
-    if (handle != NULL) {
-        /* Assign it's DATA pointer to the given handle. */
-        DATA_PTR(instance) = handle;
-    }
+    /* Assign it's DATA pointer to the given handle. */
+    DATA_PTR(instance) = handle;
 
     return instance;
 }

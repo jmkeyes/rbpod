@@ -70,12 +70,12 @@ device['PotsdamConf45'] = "Kilroy Was Here"
 device.save!
 ```
 
-### RbPod::Collection
+### RbPod::PlaylistCollection
 
-All methods that return lists return a `Collection` enumerator decorated depending on it's contents:
+You can get direct access to the playlists on the device:
 
 ```ruby
-database.playlists # => #<RbPod::Collection:0xdeadbeef>
+database.playlists # => #<RbPod::PlaylistCollection:0xdeadbeef>
 
 # For a list of all the names of playlists on the iPod:
 database.playlists.map(&:name) # => ["iPod", "Podcasts", "Recently Added"]
@@ -83,8 +83,8 @@ database.playlists.map(&:name) # => ["iPod", "Podcasts", "Recently Added"]
 # For direct access to the master playlist:
 database.playlists.master # => #<RbPod::Playlist:0xdeadbeef>
 
-# For direct access to the podcasts playlist:
-database.playlists.podcasts # => #<RbPod::Playlist:0xdeadbeef>
+# For direct access to the podcast playlist:
+database.playlists.podcast # => #<RbPod::Playlist:0xdeadbeef>
 ```
 
 ### RbPod::Playlist
@@ -98,11 +98,11 @@ playlist.name       # => "iPod"
 playlist.length     # => 400
 playlist.created_on # => 2008-04-05 08:47:46 -0700
 
-playlist.master_playlist?  # => true
-playlist.smart_playlist?   # => false
-playlist.podcast_playlist? # => false
+playlist.master?  # => true
+playlist.smart?   # => false
+playlist.podcast? # => false
 
-playlist.tracks # => #<RbPod::Collection:0xdeadbeef>
+playlist.tracks # => #<RbPod::TrackCollection:0xdeadbeef>
 ```
 
 ### RbPod::Track

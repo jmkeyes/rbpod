@@ -18,6 +18,26 @@ static VALUE rbpod_playlist_collection_database(VALUE self)
 
 /*
  * call-seq:
+ *     include?(playlist) -> Boolean
+ *
+ * Returns true or false if the given RbPod::Playlist +playlist+ exists within the database.
+ */
+static VALUE rbpod_playlist_collection_include_p(VALUE self, VALUE playlist)
+{
+    VALUE database = rbpod_playlist_collection_database(self);
+    Itdb_iTunesDB *_database = TYPED_DATA_PTR(database, Itdb_iTunesDB);
+    Itdb_Playlist *_playlist = TYPED_DATA_PTR(playlist, Itdb_Playlist);
+
+    if (rb_obj_is_instance_of(playlist, cRbPodPlaylist) == FALSE) {
+        rb_raise(eRbPodError, "Invalid argument: expected RbPod::Playlist, got %s", StringValueCStr(playlist));
+        return Qfalse;
+    }
+
+    return BooleanValue(itdb_playlist_exists(_database, _playlist));
+}
+
+/*
+ * call-seq:
  *     master() -> RbPod::Playlist
  *
  * Returns the master playlist from the database.
@@ -91,8 +111,9 @@ void Init_rbpod_playlist_collection(void)
 
     rb_define_method(cRbPodPlaylistCollection, "database", rbpod_playlist_collection_database, 0);
 
-    rb_define_method(cRbPodPlaylistCollection, "master", rbpod_playlist_collection_master, 0);
+    rb_define_method(cRbPodPlaylistCollection, "include?", rbpod_playlist_collection_include_p, 1);
 
+    rb_define_method(cRbPodPlaylistCollection, "master", rbpod_playlist_collection_master, 0);
     rb_define_method(cRbPodPlaylistCollection, "podcast", rbpod_playlist_collection_podcast, 0);
 
     return;

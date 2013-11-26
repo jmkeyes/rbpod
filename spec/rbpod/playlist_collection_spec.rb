@@ -30,5 +30,16 @@ describe RbPod::PlaylistCollection do
         end
       end
     end
+
+    describe '#include?' do
+      it 'should detect the master playlist' do
+        collection.include?(collection.master).should be_true
+      end
+
+      it 'should not detect a new playlist' do
+        anonymous_playlist = RbPod::Playlist.new('Anonymous')
+        collection.include?(anonymous_playlist).should be_false
+      end
+    end
   end
 end

@@ -6,7 +6,7 @@
 
 /*
  * call-seq:
- *     is_podcast_playlist?() -> Boolean
+ *     podcast?() -> Boolean
  *
  * Returns true or false if this playlist is the podcast-only playlist.
  */
@@ -18,7 +18,7 @@ static VALUE rbpod_playlist_podcast_p(VALUE self)
 
 /*
  * call-seq:
- *     is_master_playlist?() -> Boolean
+ *     master?() -> Boolean
  *
  * Returns true or false if this playlist is the master playlist.
  */
@@ -30,7 +30,7 @@ static VALUE rbpod_playlist_master_p(VALUE self)
 
 /*
  * call-seq:
- *     is_smart_playlist?() -> Boolean
+ *     smart?() -> Boolean
  *
  * Returns true or false if this playlist is a smart playlist.
  */
@@ -136,24 +136,24 @@ static VALUE rbpod_playlist_id_get(VALUE self)
 
 /*
  * call-seq:
- *     initialize(name, is_smart_playlist) -> RbPod::Playlist
+ *     initialize(name, smart_playlist) -> RbPod::Playlist
  *
  * Creates a detached playlist. (Not managed by the database.)
  */
 static VALUE rbpod_playlist_initialize(int argc, VALUE *argv, VALUE self)
 {
     Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
-    VALUE playlist_name, is_smart_playlist;
-    gboolean _is_smart_playlist = FALSE;
+    VALUE playlist_name, smart_playlist;
+    gboolean _smart_playlist = FALSE;
     gchar *_playlist_name = NULL;
 
-    if (rb_scan_args(argc, argv, "11", &playlist_name, &is_smart_playlist) < 1) {
+    if (rb_scan_args(argc, argv, "11", &playlist_name, &smart_playlist) < 1) {
         rb_raise(eRbPodError, "Invalid arguments.");
         return Qnil;
     }
 
     /* By default, playlists should not be smart. */
-    _is_smart_playlist = (is_smart_playlist == Qtrue) ? TRUE : FALSE;
+    _smart_playlist = (smart_playlist == Qtrue) ? TRUE : FALSE;
 
     /* Ensure we got a String-ish value, or bail. */
     _playlist_name = StringValueCStr(playlist_name);
@@ -162,7 +162,7 @@ static VALUE rbpod_playlist_initialize(int argc, VALUE *argv, VALUE self)
     itdb_playlist_free(playlist);
 
     /* Attach the newly created playlist to this instance. */
-    DATA_PTR(self) = itdb_playlist_new(_playlist_name, _is_smart_playlist);
+    DATA_PTR(self) = itdb_playlist_new(_playlist_name, _smart_playlist);
 
     /* Done. */
     return self;
@@ -209,9 +209,9 @@ void Init_rbpod_playlist(void)
 
     rb_define_alias(cRbPodPlaylist, "created_on", "timestamp");
 
-    rb_define_method(cRbPodPlaylist, "is_smart_playlist?", rbpod_playlist_smart_p, 0);
-    rb_define_method(cRbPodPlaylist, "is_master_playlist?", rbpod_playlist_master_p, 0);
-    rb_define_method(cRbPodPlaylist, "is_podcast_playlist?", rbpod_playlist_podcast_p, 0);
+    rb_define_method(cRbPodPlaylist, "smart?", rbpod_playlist_smart_p, 0);
+    rb_define_method(cRbPodPlaylist, "master?", rbpod_playlist_master_p, 0);
+    rb_define_method(cRbPodPlaylist, "podcast?", rbpod_playlist_podcast_p, 0);
 
     return;
 }

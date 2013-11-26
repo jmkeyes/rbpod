@@ -4,7 +4,7 @@ describe RbPod::PlaylistCollection do
     include_context 'a new database'
 
     # Use it as a parent to the playlist collection.
-    let (:collection) { described_class.new(database) }
+    let (:collection) { RbPod::PlaylistCollection.new(database) }
 
     describe '#database' do
       it 'should return the parent database' do

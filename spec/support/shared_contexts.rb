@@ -1,12 +1,12 @@
 shared_context 'a new database' do
   # Create a temporary folder and initialize a database in it.
-  before do
+  before(:all) do
     @directory = within_temporary_directory
     @database  = RbPod::Database.create!(@directory)
   end
 
   # This is a godawful hack, but it's needed to clean up after the tests finish.
-  after do
+  after(:all) do
     FileUtils.remove_entry_secure(@directory)
   end
 

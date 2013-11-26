@@ -110,7 +110,7 @@ void Init_rbpod_playlist_collection(void)
 #endif
     cRbPodPlaylistCollection = rb_define_class_under(mRbPod, "PlaylistCollection", rb_cObject);
 
-    rb_include_module(cRbPodPlaylistCollection, mRbPodCollection);
+    rb_real_include_module(cRbPodPlaylistCollection, mRbPodCollection);
 
     rb_define_private_method(cRbPodPlaylistCollection, "type", rbpod_playlist_collection_type, 0);
 

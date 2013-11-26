@@ -42,7 +42,7 @@ void Init_rbpod_track_collection(void)
 #endif
     cRbPodTrackCollection = rb_define_class_under(mRbPod, "TrackCollection", rb_cObject);
 
-    rb_include_module(cRbPodTrackCollection, mRbPodCollection);
+    rb_real_include_module(cRbPodTrackCollection, mRbPodCollection);
 
     rb_define_method(cRbPodTrackCollection, "initialize", rbpod_track_collection_initialize, 1);
 

@@ -17,4 +17,6 @@ RUBY_EXTERN VALUE rb_cPathname;
 
 inline VALUE rb_class_new_instance_with_data(int argc, VALUE *argv, VALUE class, void *handle);
 
+inline void rb_real_include_module(VALUE klass, VALUE module);
+
 #endif /* RBPOD_H */

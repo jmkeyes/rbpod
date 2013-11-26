@@ -122,8 +122,8 @@ static VALUE rbpod_collection_type(VALUE self)
 static VALUE rbpod_collection_included(VALUE self, VALUE other)
 {
     /* Collections should be Enumerable and Comparable. */
-    rb_extend_object(other, rb_mEnumerable);
-    rb_extend_object(other, rb_mComparable);
+    rb_include_module(other, rb_mEnumerable);
+    rb_include_module(other, rb_mComparable);
 
     /* Override Enumerable with our methods. */
     rb_extend_object(other, self);

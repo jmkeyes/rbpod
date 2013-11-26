@@ -37,7 +37,7 @@ describe RbPod::PlaylistCollection do
       end
 
       it 'should not detect a new playlist' do
-        anonymous_playlist = RbPod::Playlist.new('Anonymous')
+        anonymous_playlist = RbPod::Playlist.new()
         collection.include?(anonymous_playlist).should be_false
       end
     end

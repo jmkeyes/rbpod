@@ -45,15 +45,16 @@ static VALUE rbpod_playlist_collection_include_p(VALUE self, VALUE playlist)
  */
 static VALUE rbpod_playlist_collection_master(VALUE self)
 {
-    VALUE master_playlist_name, database = rbpod_playlist_collection_database(self);
+    VALUE database = rbpod_playlist_collection_database(self);
     Itdb_iTunesDB *_database = TYPED_DATA_PTR(database, Itdb_iTunesDB);
     Itdb_Playlist *_playlist = itdb_playlist_mpl(_database);
 
-    /* Extract the master playlist name from the playlist. */
-    master_playlist_name = rb_str_new2(_playlist->name);
+    if (_playlist == NULL) {
+        return Qnil;
+    }
 
     /* Create a new instance of the master playlist from the data provided. */
-    return rb_class_new_instance_with_data(1, &master_playlist_name, cRbPodPlaylist, _playlist);
+    return rb_class_new_instance_with_data(0, NULL, cRbPodPlaylist, _playlist);
 }
 
 /*
@@ -64,20 +65,16 @@ static VALUE rbpod_playlist_collection_master(VALUE self)
  */
 static VALUE rbpod_playlist_collection_podcast(VALUE self)
 {
-    VALUE podcast_playlist_name, database = rbpod_playlist_collection_database(self);
+    VALUE database = rbpod_playlist_collection_database(self);
     Itdb_iTunesDB *_database = TYPED_DATA_PTR(database, Itdb_iTunesDB);
     Itdb_Playlist *_playlist = itdb_playlist_podcasts(_database);
 
-    /* If we don't have a podcast playlist, make one. */
     if (_playlist == NULL) {
         return Qnil;
     }
 
-    /* Extract the podcast playlist name from the playlist. */
-    podcast_playlist_name = rb_str_new2(_playlist->name);
-
     /* Create a new instance of the podcast playlist from the data provided. */
-    return rb_class_new_instance_with_data(1, &podcast_playlist_name, cRbPodPlaylist, _playlist);
+    return rb_class_new_instance_with_data(0, NULL, cRbPodPlaylist, _playlist);
 }
 
 /*

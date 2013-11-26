@@ -136,33 +136,13 @@ static VALUE rbpod_playlist_id_get(VALUE self)
 
 /*
  * call-seq:
- *     initialize(name, smart_playlist) -> RbPod::Playlist
+ *     initialize() -> RbPod::Playlist
  *
  * Creates a detached playlist. (Not managed by the database.)
  */
-static VALUE rbpod_playlist_initialize(int argc, VALUE *argv, VALUE self)
+static VALUE rbpod_playlist_initialize(VALUE self)
 {
-    Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
-    gboolean smart_playlist = FALSE;
-    gchar *playlist_name = NULL;
-    VALUE arguments[2];
-
-    /* Parse the arguments we were given. */
-    rb_scan_args(argc, argv, "02", &arguments[0], &arguments[1]);
-
-    /* If the playlist name wasn't given, name it 'New Playlist' */
-    playlist_name  = (RTEST(arguments[0])) ? StringValueCStr(arguments[0]) : "New Playlist";
-
-    /* If the playlist wasn't explicitly marked as smart, it's not. */
-    smart_playlist = (RTEST(arguments[1])) ? TRUE : FALSE;
-
-    /* Free the old playlist. */
-    itdb_playlist_free(playlist);
-
-    /* Attach the newly created playlist to this instance. */
-    DATA_PTR(self) = itdb_playlist_new(playlist_name, smart_playlist);
-
-    /* Done. */
+    /* Nothing to see here. */
     return self;
 }
 
@@ -180,7 +160,7 @@ static void rbpod_playlist_deallocate(void *handle)
 
 static VALUE rbpod_playlist_allocate(VALUE self)
 {
-    Itdb_Playlist *playlist = itdb_playlist_new("KILROY WAS HERE", FALSE);
+    Itdb_Playlist *playlist = itdb_playlist_new("New Playlist", FALSE);
     return Data_Wrap_Struct(cRbPodPlaylist, NULL, rbpod_playlist_deallocate, (void *) playlist);
 }
 
@@ -193,7 +173,7 @@ void Init_rbpod_playlist(void)
 
     rb_define_alloc_func(cRbPodPlaylist, rbpod_playlist_allocate);
 
-    rb_define_method(cRbPodPlaylist, "initialize", rbpod_playlist_initialize, -1);
+    rb_define_method(cRbPodPlaylist, "initialize", rbpod_playlist_initialize, 0);
 
     rb_define_private_method(cRbPodPlaylist, "id", rbpod_playlist_id_get, 0);
 

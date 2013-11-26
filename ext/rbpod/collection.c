@@ -105,6 +105,7 @@ static VALUE rbpod_collection_each(VALUE self, VALUE argv)
 
     /* If we were supplied a block, enumerate the entire list. */
     for (current = collection; current != NULL; current = g_list_next(current)) {
+        /* TODO: Find a better workaround than this or Data_Wrap_Struct. */
         item = rb_class_new_instance_with_data(0, NULL, klass, current->data);
         rb_ary_store(arguments, 0, item);
         rb_yield_splat(arguments);

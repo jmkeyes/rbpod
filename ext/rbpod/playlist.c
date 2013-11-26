@@ -143,26 +143,24 @@ static VALUE rbpod_playlist_id_get(VALUE self)
 static VALUE rbpod_playlist_initialize(int argc, VALUE *argv, VALUE self)
 {
     Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
-    VALUE playlist_name, smart_playlist;
-    gboolean _smart_playlist = FALSE;
-    gchar *_playlist_name = NULL;
+    gboolean smart_playlist = FALSE;
+    gchar *playlist_name = NULL;
+    VALUE arguments[2];
 
-    if (rb_scan_args(argc, argv, "11", &playlist_name, &smart_playlist) < 1) {
-        rb_raise(eRbPodError, "Invalid arguments.");
-        return Qnil;
-    }
+    /* Parse the arguments we were given. */
+    rb_scan_args(argc, argv, "02", &arguments[0], &arguments[1]);
 
-    /* By default, playlists should not be smart. */
-    _smart_playlist = (smart_playlist == Qtrue) ? TRUE : FALSE;
+    /* If the playlist name wasn't given, name it 'New Playlist' */
+    playlist_name  = (RTEST(arguments[0])) ? StringValueCStr(arguments[0]) : "New Playlist";
 
-    /* Ensure we got a String-ish value, or bail. */
-    _playlist_name = StringValueCStr(playlist_name);
+    /* If the playlist wasn't explicitly marked as smart, it's not. */
+    smart_playlist = (RTEST(arguments[1])) ? TRUE : FALSE;
 
     /* Free the old playlist. */
     itdb_playlist_free(playlist);
 
     /* Attach the newly created playlist to this instance. */
-    DATA_PTR(self) = itdb_playlist_new(_playlist_name, _smart_playlist);
+    DATA_PTR(self) = itdb_playlist_new(playlist_name, smart_playlist);
 
     /* Done. */
     return self;

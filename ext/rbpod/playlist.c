@@ -151,7 +151,7 @@ static void rbpod_playlist_deallocate(void *handle)
     Itdb_Playlist *playlist = (Itdb_Playlist *) handle;
 
     /* This playlist was unmanaged, so free it manually. */
-    if (playlist->itdb == NULL || playlist->id == 0) {
+    if (playlist->itdb == NULL) {
         itdb_playlist_free(playlist);
     }
 

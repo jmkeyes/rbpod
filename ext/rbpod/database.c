@@ -180,6 +180,7 @@ static VALUE rbpod_database_allocate(VALUE self)
 static VALUE rbpod_database_create(int argc, VALUE *argv, VALUE self)
 {
     gchar *_mount_point, *_device_name, *_model_number;
+    VALUE model_matcher, model_regexp, ignorecase;
     VALUE mount_point, device_name, model_number;
     GError *error = NULL;
 
@@ -195,17 +196,28 @@ static VALUE rbpod_database_create(int argc, VALUE *argv, VALUE self)
     }
 
     /* If we didn't specify a device name, default to 'iPod'. */
-    if (RTEST(device_name) && (TYPE(device_name) != T_STRING || RSTRING_LEN(device_name) < 4)) {
-        rb_raise(eRbPodError, "Device name should be a string of at least three characters.");
-        return Qnil;
-    } else {
+    if (RTEST(device_name) == FALSE) {
         device_name = rb_str_new2("iPod");
     }
 
-    /* If the specified model number is specified but isn't a string, bail now. TODO: Use a regexp, stupid. */
-    if (NIL_P(model_number) == FALSE && (TYPE(model_number) != T_STRING || RSTRING_LEN(model_number) < 4)) {
-        rb_raise(eRbPodError, "Model number should be a string of at least four characters.");
+    /* Ensure it's a valid device name, if it was given. */
+    if (TYPE(device_name) == T_STRING && RSTRING_LEN(device_name) == 0) {
+        rb_raise(eRbPodError, "Device name must not be an empty string.");
         return Qnil;
+    }
+
+    /* If a model number was given, ensure it's a string. */
+    if (RTEST(model_number)) {
+        Check_Type(device_name, T_STRING);
+
+        model_matcher = rb_str_new2("/x?[A-Z][0-9]{3}/");
+        ignorecase = rb_const_get(rb_cRegexp, rb_intern("IGNORECASE"));
+        model_regexp = rb_reg_new_str(model_matcher, ignorecase);
+
+        if (RTEST(rb_reg_match(model_regexp, model_number)) == FALSE) {
+            rb_raise(eRbPodError, "Model number must be a string matching: /x?[A-Z][0-9]{3}/i");
+            return Qnil;
+        }
     }
 
     /* Extract pointers for glib use. */

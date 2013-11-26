@@ -2,6 +2,7 @@
 
 #include "rbpod.h"
 #include "track.h"
+#include "playlist.h"
 #include "collection.h"
 #include "track_collection.h"
 
@@ -24,7 +25,13 @@ static VALUE rbpod_track_collection_playlist(VALUE self)
  */
 static VALUE rbpod_track_collection_initialize(VALUE self, VALUE playlist)
 {
+    if (rb_obj_is_instance_of(playlist, cRbPodPlaylist) == FALSE) {
+        rb_raise(eRbPodError, "Invalid Arguments: Expected RbPod::Playlist, got %s", StringValueCStr(playlist));
+        return Qnil;
+    }
+
     rb_iv_set(self, "@playlist", playlist);
+
     return self;
 }
 

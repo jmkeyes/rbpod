@@ -1,6 +1,7 @@
 /* playlist_collection.c */
 
 #include "rbpod.h"
+#include "database.h"
 #include "playlist.h"
 #include "collection.h"
 #include "playlist_collection.h"
@@ -87,7 +88,13 @@ static VALUE rbpod_playlist_collection_podcast(VALUE self)
  */
 static VALUE rbpod_playlist_collection_initialize(VALUE self, VALUE database)
 {
+    if (rb_obj_is_instance_of(database, cRbPodDatabase) == FALSE) {
+        rb_raise(eRbPodError, "Invalid Arguments: Expected RbPod::Database, got %s", StringValueCStr(database));
+        return Qnil;
+    }
+
     rb_iv_set(self, "@database", database);
+
     return self;
 }
 

@@ -198,7 +198,7 @@ static VALUE rbpod_device_initialize(VALUE self, VALUE database)
     Itdb_iTunesDB *_database = TYPED_DATA_PTR(database, Itdb_iTunesDB);
 
     /* Make sure we were given an instance of a RbPod::Database. */
-    if (rb_class_of(database) != cRbPodDatabase) {
+    if (rb_obj_is_instance_of(database, cRbPodDatabase) == FALSE) {
         rb_raise(eRbPodError, "Given database must be an instance of RbPod::Database: %s", StringValueCStr(database));
         return Qnil;
     }

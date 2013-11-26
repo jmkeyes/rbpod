@@ -141,6 +141,12 @@ static VALUE rbpod_database_initialize(VALUE self, VALUE mount_point)
     Itdb_iTunesDB *previous = database;
     GError *error = NULL;
 
+    /* Check if the mount point is a directory. */
+    if (rb_file_directory_p(rb_cFile, mount_point) != Qtrue) {
+        rb_raise(eRbPodError, "The mount point must be a directory!");
+        return Qnil;
+    }
+
     /* Try to parse the database from the given mount point. */
     database = itdb_parse(StringValueCStr(mount_point), &error);
 

@@ -53,6 +53,8 @@ static VALUE rbpod_database_playlists_get(VALUE self)
 /*
  * call-seq:
  *     tracks() -> RbPod::TrackCollection
+ *
+ * Returns a collection of all tracks added to this database.
  */
 static VALUE rbpod_database_tracks_get(VALUE self)
 {
@@ -97,6 +99,9 @@ static VALUE rbpod_database_version_get(VALUE self)
     return INT2NUM(database->version);
 }
 
+/*
+ * :nodoc:
+ */
 static VALUE rbpod_database_id_get(VALUE self)
 {
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
@@ -116,6 +121,9 @@ static VALUE rbpod_database_mountpoint_get(VALUE self)
     return rb_class_new_instance(1, &mount_point, rb_cPathname);
 }
 
+/*
+ * :nodoc:
+ */
 static VALUE rbpod_database_mountpoint_set(VALUE self, VALUE path)
 {
     Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);

@@ -39,6 +39,9 @@ static VALUE rbpod_track_collection_initialize(VALUE self, VALUE playlist)
     return self;
 }
 
+/*
+ * :nodoc:
+ */
 static VALUE rbpod_track_collection_type(VALUE self)
 {
     return cRbPodTrack;

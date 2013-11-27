@@ -99,6 +99,9 @@ static VALUE rbpod_playlist_collection_initialize(VALUE self, VALUE database)
     return self;
 }
 
+/*
+ * :nodoc:
+ */
 static VALUE rbpod_playlist_collection_type(VALUE self)
 {
     return cRbPodPlaylist;

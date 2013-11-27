@@ -185,6 +185,7 @@ void Init_rbpod_playlist(void)
     rb_define_method(cRbPodPlaylist, "shuffle!", rbpod_playlist_shuffle_bang, 0);
     rb_define_method(cRbPodPlaylist, "timestamp", rbpod_playlist_timestamp_get, 0);
 
+    /* :nodoc */
     rb_define_alias(cRbPodPlaylist, "created_on", "timestamp");
 
     rb_define_method(cRbPodPlaylist, "smart?", rbpod_playlist_smart_p, 0);

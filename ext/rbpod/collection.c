@@ -114,12 +114,18 @@ static VALUE rbpod_collection_each(VALUE self, VALUE argv)
     return self;
 }
 
+/*
+ * :nodoc:
+ */
 static VALUE rbpod_collection_type(VALUE self)
 {
     /* We should get an error if we try to create an instance of NilClass. */
     return Qnil;
 }
 
+/*
+ * :nodoc:
+ */
 static VALUE rbpod_collection_included(VALUE self, VALUE other)
 {
     /* Collections should be Enumerable and Comparable. */

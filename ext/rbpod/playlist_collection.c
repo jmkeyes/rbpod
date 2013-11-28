@@ -39,6 +39,19 @@ static VALUE rbpod_playlist_collection_include_p(VALUE self, VALUE playlist)
 
 /*
  * call-seq:
+ *     size() -> Integer
+ *
+ * Returns the total number of playlists in this database.
+ */
+static VALUE rbpod_playlist_collection_size(VALUE self)
+{
+    VALUE database = rbpod_playlist_collection_database(self);
+    Itdb_iTunesDB *_database = TYPED_DATA_PTR(database, Itdb_iTunesDB);
+    return INT2NUM(itdb_playlists_number(_database));
+}
+
+/*
+ * call-seq:
  *     master() -> RbPod::Playlist
  *
  * Returns the master playlist from the database.
@@ -126,6 +139,8 @@ void Init_rbpod_playlist_collection(void)
 
     rb_define_method(cRbPodPlaylistCollection, "master", rbpod_playlist_collection_master, 0);
     rb_define_method(cRbPodPlaylistCollection, "podcast", rbpod_playlist_collection_podcast, 0);
+
+    rb_define_method(cRbPodPlaylistCollection, "size", rbpod_playlist_collection_size, 0);
 
     return;
 }

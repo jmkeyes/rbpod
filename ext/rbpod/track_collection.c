@@ -19,6 +19,19 @@ static VALUE rbpod_track_collection_playlist(VALUE self)
 
 /*
  * call-seq:
+ *     size() -> Integer
+ *
+ * Returns the total number of tracks in this playlist.
+ */
+static VALUE rbpod_track_collection_size(VALUE self)
+{
+    VALUE playlist = rbpod_track_collection_playlist(self);
+    Itdb_Playlist *_playlist = TYPED_DATA_PTR(playlist, Itdb_Playlist);
+    return INT2NUM(itdb_playlist_tracks_number(_playlist));
+}
+
+/*
+ * call-seq:
  *     initialize(playlist) -> RbPod::TrackCollection
  *
  * Given an RbPod::Playlist +playlist+, returns a collection of tracks within the playlist.
@@ -61,6 +74,8 @@ void Init_rbpod_track_collection(void)
     rb_define_private_method(cRbPodTrackCollection, "type", rbpod_track_collection_type, 0);
 
     rb_define_method(cRbPodTrackCollection, "playlist", rbpod_track_collection_playlist, 0);
+
+    rb_define_method(cRbPodTrackCollection, "size", rbpod_track_collection_size, 0);
 
     return;
 }

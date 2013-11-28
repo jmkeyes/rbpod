@@ -1,7 +1,6 @@
 /* error.c */
 
 #include "rbpod.h"
-#include "error.h"
 
 inline VALUE rbpod_raise_error(GError *error)
 {

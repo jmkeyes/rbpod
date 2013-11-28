@@ -1,10 +1,6 @@
 /* track_collection.c */
 
 #include "rbpod.h"
-#include "track.h"
-#include "playlist.h"
-#include "collection.h"
-#include "track_collection.h"
 
 /*
  * call-seq:

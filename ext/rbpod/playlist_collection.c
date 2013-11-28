@@ -1,10 +1,6 @@
 /* playlist_collection.c */
 
 #include "rbpod.h"
-#include "database.h"
-#include "playlist.h"
-#include "collection.h"
-#include "playlist_collection.h"
 
 /*
  * call-seq:

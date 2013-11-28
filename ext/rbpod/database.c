@@ -1,12 +1,6 @@
 /* database.c */
 
 #include "rbpod.h"
-#include "error.h"
-#include "device.h"
-#include "database.h"
-#include "playlist.h"
-#include "track_collection.h"
-#include "playlist_collection.h"
 
 /*
  * call-seq:

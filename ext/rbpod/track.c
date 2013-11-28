@@ -1,7 +1,6 @@
 /* track.c */
 
 #include "rbpod.h"
-#include "track.h"
 
 /*
  * call-seq:

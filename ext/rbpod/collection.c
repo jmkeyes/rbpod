@@ -1,7 +1,6 @@
 /* collection.c */
 
 #include "rbpod.h"
-#include "collection.h"
 
 /*
  * call-seq:

@@ -22,9 +22,9 @@ RUBY_EXTERN void Init_rbpod_track_collection(void);      /* track_collection.c *
 RUBY_EXTERN void Init_rbpod_playlist_collection(void);   /* playlist_collection.c */
 
 /* Helper function prototypes. */
+RUBY_EXTERN inline VALUE rbpod_raise_error(GError *error);
 RUBY_EXTERN inline VALUE rb_class_new_instance_with_data(int argc, VALUE *argv, VALUE class, void *handle);
 RUBY_EXTERN inline void rb_real_include_module(VALUE klass, VALUE module);
-RUBY_EXTERN inline VALUE rbpod_raise_error(GError *error);
 
 /* Global variables. */
 RUBY_EXTERN VALUE mRbPod;                   /* rbpod.c */

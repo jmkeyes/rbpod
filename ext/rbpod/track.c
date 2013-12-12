@@ -23,32 +23,25 @@ static VALUE rbpod_track_transferred_p(VALUE self)
 static VALUE rbpod_track_path_get(VALUE self)
 {
     Itdb_Track *track = TYPED_DATA_PTR(self, Itdb_Track);
-    VALUE mount_point, path_parts, file_path, full_path;
-    Itdb_iTunesDB *database = track->itdb;
-    const gchar *ipod_path = NULL;
+    gchar *buffer = NULL;
+    VALUE path;
 
-    /* Never hurts to be careful, right? */
-    if (database == NULL || track->ipod_path == NULL) {
+    /* If there's no database or file path, this track hasn't been transferred. */
+    if (track->itdb == NULL || track->ipod_path == NULL) {
         return Qnil;
     }
 
-    /* Skip the prepended directory separator. */
-    ipod_path  = (const gchar *) &track->ipod_path[1];
+    /* Find the full path to the track. */
+    buffer = itdb_filename_on_ipod(track);
 
-    /* Extract the iPod mount point from the database pointer. */
-    mount_point = rb_str_new2(itdb_get_mountpoint(database));
+    /* Conert it to a string. */
+    path = rb_str_new2(buffer);
 
-    /* Split the track's ipod_path by ':' character. */
-    path_parts = rb_str_split(rb_str_new2(ipod_path), ":");
-
-    /* Use File.join to rejoin the path safely. */
-    file_path = rb_funcall2(rb_cFile, rb_intern("join"), 1, &path_parts);
-
-    /* Retrieve the expanded absolute path name. */
-    full_path = rb_file_expand_path(file_path, mount_point);
+    /* Free the buffer. */
+    g_free(buffer);
 
     /* Return a Pathname instance for the resolved path. */
-    return rb_class_new_instance(1, &full_path, rb_cPathname);
+    return rb_class_new_instance(1, &path, rb_cPathname);
 }
 
 /*

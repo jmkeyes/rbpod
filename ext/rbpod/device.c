@@ -186,30 +186,36 @@ static VALUE rbpod_device_sysinfo_save(VALUE self)
 
 /*
  * call-seq:
- *     initialize(database) -> RbPod::Device
+ *     initialize(mount_point) -> RbPod::Device
  *
- * Creates an RbPod::Device for a given RbPod::Database. You shouldn't have to call this.
+ * Creates an RbPod::Device mapped to a given device mount point.
  */
-static VALUE rbpod_device_initialize(VALUE self, VALUE database)
+static VALUE rbpod_device_initialize(VALUE self, VALUE mount_point)
 {
-    Itdb_iTunesDB *_database = TYPED_DATA_PTR(database, Itdb_iTunesDB);
+    Itdb_Device *device = TYPED_DATA_PTR(self, Itdb_Device);
 
-    /* Make sure we were given an instance of a RbPod::Database. */
-    if (rb_obj_is_instance_of(database, cRbPodDatabase) == FALSE) {
-        rb_raise(eRbPodError, "Given database must be an instance of RbPod::Database: %s", StringValueCStr(database));
+    /* Check if the mount point is a directory. */
+    if (rb_file_directory_p(rb_cFile, mount_point) != Qtrue) {
+        rb_raise(eRbPodError, "The mount point must be a directory!");
         return Qnil;
     }
 
-    /* The database pointer and it's device should both be non-NULL. */
-    if (_database == NULL || _database->device == NULL) {
-        rb_raise(eRbPodError, "Given database and/or device was NULL.");
-        return Qnil;
-    }
+    itdb_device_set_mountpoint(device, StringValueCStr(mount_point));
 
-    /* Attach our data pointer to this database's backing device. */
-    DATA_PTR(self) = _database->device;
+    DATA_PTR(self) = device;
 
     return self;
+}
+
+static void rbpod_device_deallocate(void *handle)
+{
+    itdb_device_free((Itdb_Device *) handle);
+}
+
+static VALUE rbpod_device_allocate(VALUE self)
+{
+    Itdb_Device *device = itdb_device_new();
+    return Data_Wrap_Struct(cRbPodDevice, NULL, rbpod_device_deallocate, (void *) device);
 }
 
 void Init_rbpod_device(void)
@@ -218,6 +224,8 @@ void Init_rbpod_device(void)
     mRbPod = rb_define_module("RbPod");
 #endif
     cRbPodDevice = rb_define_class_under(mRbPod, "Device", rb_cObject);
+
+    rb_define_alloc_func(cRbPodDevice, rbpod_device_allocate);
 
     rb_define_method(cRbPodDevice, "initialize", rbpod_device_initialize, 1);
 

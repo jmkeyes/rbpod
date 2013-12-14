@@ -199,34 +199,35 @@ static VALUE rbpod_database_create(int argc, VALUE *argv, VALUE self)
         return Qnil;
     }
 
-    /* If we didn't specify a device name, default to 'iPod'. */
-    if (RTEST(device_name) == FALSE) {
-        device_name = rb_str_new2("iPod");
-    }
+    /* If a device name was given, ensure it's a string. */
+    if (RTEST(device_name)) {
+        Check_Type(device_name, T_STRING);
 
-    /* Ensure it's a valid device name, if it was given. */
-    if (TYPE(device_name) == T_STRING && RSTRING_LEN(device_name) == 0) {
-        rb_raise(eRbPodError, "Device name must not be an empty string.");
-        return Qnil;
+        if (RSTRING_LEN(device_name) < 4) {
+            rb_raise(eRbPodError, "Device name must be a string of at least four characters.");
+            return Qnil;
+        }
     }
 
     /* If a model number was given, ensure it's a string. */
     if (RTEST(model_number)) {
-        Check_Type(device_name, T_STRING);
+        Check_Type(model_number, T_STRING);
 
-        model_matcher = rb_str_new2("/x?[A-Z][0-9]{3}/");
+        model_matcher = rb_str_new2("/[xM]?[A-Z][0-9]{3}/");
         ignorecase = rb_const_get(rb_cRegexp, rb_intern("IGNORECASE"));
         model_regexp = rb_reg_new_str(model_matcher, ignorecase);
 
         if (RTEST(rb_reg_match(model_regexp, model_number)) == FALSE) {
-            rb_raise(eRbPodError, "Model number must be a string matching: /x?[A-Z][0-9]{3}/i");
+            rb_raise(eRbPodError, "Model number must be a string matching: /[xM]?[A-Z][0-9]{3}/i");
             return Qnil;
         }
     }
 
     /* Extract pointers for glib use. */
     _mount_point  = StringValueCStr(mount_point);
-    _device_name  = StringValueCStr(device_name);
+
+    /* GPod will use 'iPod' as the device name if it wasn't specified. */
+    _device_name  = !NIL_P(device_name) ? StringValueCStr(device_name) : NULL;
 
     /* GPod can function with a NULL model number, however, artwork may not function properly. */
     _model_number = !NIL_P(model_number) ? StringValueCStr(model_number) : NULL;

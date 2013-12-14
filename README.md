@@ -104,10 +104,21 @@ playlist.podcast? # => false
 
 playlist.tracks # => #<RbPod::TrackCollection:0xdeadbeef>
 ```
+### RbPod::TrackCollection
+
+All playlists contain a `tracks` method which returns an `RbPod::TrackCollection`:
+
+```ruby
+tracks = database.playlists.master.tracks
+
+tracks.playlist # => #<RbPod::Playlist:0xdeadbeef>
+tracks.length   # => 400
+
+tracks.first # => #<RbPod::Track:0xdeadbeef>
+tracks[0]    # => #<RbPod::Track:0xdeadbeef>
+```
 
 ### RbPod::Track
-
-Tracks also can do a lot, but not complete:
 
 ```ruby
 track = database.playlists.master.tracks.first

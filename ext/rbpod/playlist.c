@@ -114,9 +114,20 @@ static VALUE rbpod_playlist_compare(VALUE self, VALUE other)
         return Qnil;
     }
 
+    /* If this is the master playlist, it always comes first. */
+    if (rbpod_playlist_master_p(self) == Qtrue) {
+        return NUM2INT(-1);
+    }
+
+    /* If we're comparing against the master playlist, it comes first. */
+    if (rbpod_playlist_master_p(other) == Qtrue) {
+        return NUM2INT(1);
+    }
+
     this_playlist_name  = rbpod_playlist_name_get(self);
     other_playlist_name = rbpod_playlist_name_get(other);
 
+    /* Otherwise, compare by playlist name. */
     return rb_str_cmp(this_playlist_name, other_playlist_name);
 }
 

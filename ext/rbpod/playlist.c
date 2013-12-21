@@ -122,18 +122,6 @@ static VALUE rbpod_playlist_compare(VALUE self, VALUE other)
 
 /*
  * call-seq:
- *     id() -> Fixnum
- *
- * Returns the internal ID number for this playlist. Do not use this method.
- */
-static VALUE rbpod_playlist_id_get(VALUE self)
-{
-    Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
-    return INT2NUM(playlist->id);
-}
-
-/*
- * call-seq:
  *     initialize() -> RbPod::Playlist
  *
  * Creates a detached playlist. (Not managed by the database.)
@@ -172,8 +160,6 @@ void Init_rbpod_playlist(void)
     rb_define_alloc_func(cRbPodPlaylist, rbpod_playlist_allocate);
 
     rb_define_method(cRbPodPlaylist, "initialize", rbpod_playlist_initialize, 0);
-
-    rb_define_private_method(cRbPodPlaylist, "id", rbpod_playlist_id_get, 0);
 
     rb_define_method(cRbPodPlaylist, "<=>", rbpod_playlist_compare, 1);
 

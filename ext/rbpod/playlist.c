@@ -40,7 +40,21 @@ static VALUE rbpod_playlist_smart_p(VALUE self)
 
 /*
  * call-seq:
- *     timestamp() -> Time
+ *     smart=(flag) -> nil
+ *
+ * Set this playlist to a smart playlist.
+ */
+static VALUE rbpod_playlist_smart_set(VALUE self, VALUE flag)
+{
+    Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
+
+    playlist->is_spl = (RTEST(flag)) ? TRUE : FALSE;
+
+    return Qnil;
+}
+
+/*
+ * call-seq:
  *     created_on() -> Time
  *
  * Returns a Time object representing the time that this playlist was created.
@@ -85,6 +99,27 @@ static VALUE rbpod_playlist_length_get(VALUE self)
 {
     Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
     return INT2NUM(itdb_playlist_tracks_number(playlist));
+}
+
+/*
+ * call-seq:
+ *     name=(string) -> nil
+ *
+ * Sets the name of this playlist.
+ */
+static VALUE rbpod_playlist_name_set(VALUE self, VALUE name)
+{
+    Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
+    gchar *new_name = StringValueCStr(name);
+    gchar *old_name = playlist->name;
+
+    /* Free up the old name. */
+    g_free(old_name);
+
+    /* Attach the new name. */
+    playlist->name = new_name;
+
+    return Qnil;
 }
 
 /*
@@ -179,6 +214,8 @@ void Init_rbpod_playlist(void)
     rb_define_method(cRbPodPlaylist, "tracks", rbpod_playlist_tracks_get, 0);
     rb_define_method(cRbPodPlaylist, "created_on", rbpod_playlist_timestamp_get, 0);
 
+    rb_define_method(cRbPodPlaylist, "name=", rbpod_playlist_name_set, 1);
+    rb_define_method(cRbPodPlaylist, "smart=", rbpod_playlist_smart_set, 1);
 
     rb_define_method(cRbPodPlaylist, "smart?", rbpod_playlist_smart_p, 0);
     rb_define_method(cRbPodPlaylist, "master?", rbpod_playlist_master_p, 0);

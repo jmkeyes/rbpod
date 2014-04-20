@@ -41,4 +41,24 @@ describe RbPod::PlaylistCollection do
       collection.include?(anonymous_playlist).should be_false
     end
   end
+
+  let (:playlist) { RbPod::Playlist.new() }
+
+  describe '#insert' do
+    it 'should add a playlist to the database' do
+      collection.insert(playlist)
+      collection.database.save!
+      collection.include?(playlist).should be_true
+    end
+  end
+
+  describe '#remove' do
+    it 'should remove a playlist from the database' do
+      collection.insert(playlist)
+      collection.database.save!
+      collection.remove(playlist)
+      collection.database.save!
+      collection.include?(playlist).should be_false
+    end
+  end
 end

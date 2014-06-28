@@ -13,16 +13,8 @@
 #include <gpod/itdb.h>
 #endif
 
-/* C pre-processor macro defintions. */
-#define BooleanValue(value) (value) ? Qtrue : Qfalse
-
-#define TYPED_DATA_PTR(self, type) ((type *) DATA_PTR(self))
-
-#ifdef HAVE_STDDEF_H
-#define MEMBER_OF(structure, member)     ((structure *)0)->member
-#define MEMBER_SIZE(structure, member)   sizeof(MEMBER_OF(structure, member))
-#define MEMBER_OFFSET(structure, member) offsetof(MEMBER_OF(structure, member))
-#endif
+/* Pre-processor macros. */
+#include "macros.h"
 
 /* Initialization function prototypes. */
 RUBY_EXTERN void Init_rbpod(void);                       /* rbpod.c */

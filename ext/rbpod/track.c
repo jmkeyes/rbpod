@@ -115,7 +115,7 @@ static VALUE rbpod_track_ipod_path_set(VALUE self, VALUE value)
     gchar *buffer = NULL;
 
     if (track->ipod_path != NULL)
-        g_free(track);
+        g_free(track->ipod_path);
 
     buffer = g_strdup(new_path);
 

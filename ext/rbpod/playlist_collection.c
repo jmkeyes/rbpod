@@ -84,11 +84,11 @@ static VALUE rbpod_playlist_collection_remove(VALUE self, VALUE playlist)
 
 /*
  * call-seq:
- *     include?(playlist) -> Boolean
+ *     include?(playlist) -> boolean
  *
  * Returns true or false if the given RbPod::Playlist +playlist+ exists within the database.
  */
-static VALUE rbpod_playlist_collection_include_p(VALUE self, VALUE playlist)
+static VALUE rbpod_playlist_collection_include(VALUE self, VALUE playlist)
 {
     VALUE database = rbpod_playlist_collection_database(self);
     Itdb_iTunesDB *_database = TYPED_DATA_PTR(database, Itdb_iTunesDB);
@@ -104,7 +104,7 @@ static VALUE rbpod_playlist_collection_include_p(VALUE self, VALUE playlist)
 
 /*
  * call-seq:
- *     size() -> Integer
+ *     size() -> integer
  *
  * Returns the total number of playlists in this database.
  */
@@ -200,7 +200,7 @@ void Init_rbpod_playlist_collection(void)
 
     rb_define_method(cRbPodPlaylistCollection, "database", rbpod_playlist_collection_database, 0);
 
-    rb_define_method(cRbPodPlaylistCollection, "include?", rbpod_playlist_collection_include_p, 1);
+    rb_define_method(cRbPodPlaylistCollection, "include?", rbpod_playlist_collection_include, 1);
 
     rb_define_method(cRbPodPlaylistCollection, "master", rbpod_playlist_collection_master, 0);
     rb_define_method(cRbPodPlaylistCollection, "podcast", rbpod_playlist_collection_podcast, 0);

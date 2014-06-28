@@ -202,12 +202,27 @@ static VALUE rbpod_track_mark_unplayed_set(VALUE self, VALUE value)
 
 /*
  * call-seq:
- *     initialize() -> RbPod::Track
+ *     initialize(source = nil) -> RbPod::Track
  *
  * Creates a detached track. (Not managed by a database.)
  */
-static VALUE rbpod_track_initialize(VALUE self)
+static VALUE rbpod_track_initialize(int argc, VALUE *argv, VALUE self)
 {
+    Itdb_Track *track = TYPED_DATA_PTR(self, Itdb_Track);
+    gchar *buffer = NULL;
+    VALUE source = Qnil;
+
+    if (rb_scan_args(argc, argv, "01", &source) == 1) {
+        buffer = StringValueCStr(source);
+
+        if (g_file_test(buffer, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_SYMLINK) == FALSE) {
+            rb_raise(eRbPodError, "Invalid Argument: Source must be a path to an existing file.");
+            return Qnil;
+        }
+
+        track->userdata = buffer;
+    }
+
     return self;
 }
 
@@ -226,6 +241,11 @@ static void rbpod_track_deallocate(void *handle)
 static VALUE rbpod_track_allocate(VALUE self)
 {
     Itdb_Track *track = itdb_track_new();
+
+    track->userdata = NULL;
+    track->userdata_destroy = (ItdbUserDataDestroyFunc) g_free;
+    track->userdata_duplicate = (ItdbUserDataDuplicateFunc) g_strdup;
+
     return Data_Wrap_Struct(cRbPodTrack, NULL, rbpod_track_deallocate, (void *) track);
 }
 
@@ -238,7 +258,7 @@ void Init_rbpod_track(void)
 
     rb_define_alloc_func(cRbPodTrack, rbpod_track_allocate);
 
-    rb_define_method(cRbPodTrack, "initialize", rbpod_track_initialize, 0);
+    rb_define_method(cRbPodTrack, "initialize", rbpod_track_initialize, -1);
 
     sMEDIA_TYPE_AUDIO_VIDEO   = rb_intern("MEDIA_TYPE_AUDIO_VIDEO");
     sMEDIA_TYPE_AUDIO         = rb_intern("MEDIA_TYPE_AUDIO");

@@ -76,6 +76,7 @@ static VALUE rbpod_track_collection_insert(int argc, VALUE *argv, VALUE self)
     VALUE track = Qnil, position = Qnil;
     Itdb_Track *_track = NULL;
     gint32 _position = 0;
+    GError *error = NULL;
 
     if (rb_scan_args(argc, argv, "11", &track, &position) < 1) {
         rb_raise(eRbPodError, "Invalid arguments: Expected >= 1 argument!");
@@ -91,7 +92,26 @@ static VALUE rbpod_track_collection_insert(int argc, VALUE *argv, VALUE self)
         return Qnil;
     }
 
+    /* Has this track already been transferred? If so, just add it to the playlist and be done. */
+    if (_track->transferred == TRUE) {
+        itdb_playlist_add_track(_playlist, _track, _position);
+        return Qnil;
+    }
+
+    /* Do we have a source path for this track? */
+    if (_track->userdata != NULL && g_file_test(_track->userdata, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_SYMLINK) == FALSE) {
+        rb_raise(eRbPodError, "Invalid argument: Cannot add a track without a source file.");
+        return Qnil;
+    }
+
     itdb_playlist_add_track(_playlist, _track, _position);
+
+    /* Copy the track to the iPod. XXX: Unlock the GVL instead, stupid. */
+    if (itdb_cp_track_to_ipod(_track, _track->userdata, &error) == FALSE) {
+        itdb_playlist_remove_track(_playlist, _track);
+        return rbpod_raise_error(error);
+    }
+
 
     return Qnil;
 }

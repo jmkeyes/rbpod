@@ -9,8 +9,16 @@
 #include <stddef.h>
 #endif
 
+#ifdef HAVE_SYS_STAT_H
+#include <sys/stat.h>
+#endif
+
 #ifdef HAVE_GPOD_ITDB_H
 #include <gpod/itdb.h>
+#endif
+
+#ifdef HAVE_TAGLIB_TAG_C_H
+#include <taglib/tag_c.h>
 #endif
 
 /* Pre-processor macros. */

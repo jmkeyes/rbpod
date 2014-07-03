@@ -201,6 +201,69 @@ static VALUE rbpod_track_mark_unplayed_set(VALUE self, VALUE value)
 }
 
 /*
+ * :nodoc:
+ */
+static inline gchar *ensure_string(const gchar *buffer)
+{
+    return (buffer == NULL || buffer[0] == '\0') ? NULL : g_strdup(buffer);
+}
+
+/*
+ * call-seq:
+ *     parse!(source) -> RbPod::Track
+ *
+ * Parses a given file +source+, attempts to extract ID3 tags, and returns an RbPod::Track.
+ */
+static VALUE rbpod_track_parse(VALUE klass, VALUE source)
+{
+    VALUE self = rb_class_new_instance(1, &source, klass);
+#ifdef HAVE_TAGLIB_TAG_C_H
+    Itdb_Track *track = TYPED_DATA_PTR(self, Itdb_Track);
+    const TagLib_AudioProperties *properties = NULL;
+    TagLib_File *media = NULL;
+    TagLib_Tag  *tag = NULL;
+    struct stat buffer;
+
+    taglib_set_strings_unicode(FALSE);
+
+    media = taglib_file_new(track->userdata);
+
+    if (media == NULL || taglib_file_is_valid(media) == FALSE) {
+        rb_raise(eRbPodError, "Track is invalid or does not have an ID3 tag.");
+        return Qnil;
+    }
+
+    if (stat(track->userdata, &buffer) == -1) {
+        rb_raise(eRbPodError, "Unable to stat() track; it probably doesn't exist.");
+        return Qnil;
+    }
+
+    track->size = buffer.st_size;
+
+    tag        = taglib_file_tag(media);
+    properties = taglib_file_audioproperties(media);
+
+    track->title    = ensure_string(taglib_tag_title(tag));
+    track->artist   = ensure_string(taglib_tag_artist(tag));
+    track->album    = ensure_string(taglib_tag_album(tag));
+    track->genre    = ensure_string(taglib_tag_genre(tag));
+    track->comment  = ensure_string(taglib_tag_comment(tag));
+
+    track->year     = taglib_tag_year(tag);
+    track->track_nr = taglib_tag_track(tag);
+
+    track->bitrate    = taglib_audioproperties_bitrate(properties);
+    track->samplerate = taglib_audioproperties_samplerate(properties);
+    track->tracklen   = taglib_audioproperties_length(properties) * 1000;
+
+    taglib_tag_free_strings();
+    taglib_file_free(media);
+#endif
+    return self;
+}
+
+
+/*
  * call-seq:
  *     initialize(source = nil) -> RbPod::Track
  *
@@ -257,6 +320,8 @@ void Init_rbpod_track(void)
     cRbPodTrack = rb_define_class_under(mRbPod, "Track", rb_cObject);
 
     rb_define_alloc_func(cRbPodTrack, rbpod_track_allocate);
+
+    rb_define_singleton_method(cRbPodTrack, "parse!", rbpod_track_parse, 1);
 
     rb_define_method(cRbPodTrack, "initialize", rbpod_track_initialize, -1);
 

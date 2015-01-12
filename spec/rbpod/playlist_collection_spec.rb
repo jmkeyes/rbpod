@@ -33,12 +33,12 @@ describe RbPod::PlaylistCollection do
 
   describe '#include?' do
     it 'should detect the master playlist' do
-      collection.include?(collection.master).should be_true
+      collection.include?(collection.master).should be true
     end
 
     it 'should not detect a new playlist' do
       anonymous_playlist = RbPod::Playlist.new()
-      collection.include?(anonymous_playlist).should be_false
+      collection.include?(anonymous_playlist).should be false
     end
   end
 
@@ -48,7 +48,7 @@ describe RbPod::PlaylistCollection do
     it 'should add a playlist to the database' do
       collection.insert(playlist)
       collection.database.save!
-      collection.include?(playlist).should be_true
+      collection.include?(playlist).should be true
     end
   end
 
@@ -58,7 +58,7 @@ describe RbPod::PlaylistCollection do
       collection.database.save!
       collection.remove(playlist)
       collection.database.save!
-      collection.include?(playlist).should be_false
+      collection.include?(playlist).should be false
     end
   end
 end

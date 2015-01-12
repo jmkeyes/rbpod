@@ -62,7 +62,7 @@ describe RbPod::Device do
     %w[photos videos artwork podcasts chapter_images].each do |feature|
       describe "#supports_#{feature}?" do
         it 'should be false' do
-          device.send("supports_#{feature}?").should be_false
+          device.send("supports_#{feature}?").should be false
         end
       end
     end

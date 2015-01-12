@@ -50,7 +50,7 @@ describe RbPod::Database do
 
     describe '#filename' do
       it 'should be an existing iTunes database on the file system' do
-        File.exists?(database.filename).should be_true
+        File.exists?(database.filename).should be true
       end
     end
 

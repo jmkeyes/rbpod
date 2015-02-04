@@ -138,6 +138,8 @@ If anything goes belly up at run time, an `RbPod::Error` exception should be thr
 
  * The RSpec tests need a lot of work and significantly more coverage, especially for integration.
  * The documentation could be spiced up a bit. It's dry and doesn't provide too much useful information.
+ * The libgpod calls do not unlock the GVL; the library will block in multi-threaded environments.
+ * The extension is oblivious to string encoding; it's built for Ruby >= 1.9.3.
 
 ## Contributing
 

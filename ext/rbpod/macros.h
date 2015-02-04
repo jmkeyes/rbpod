@@ -7,6 +7,12 @@
 
 #define TYPED_DATA_PTR(self, type) ((type *) DATA_PTR(self))
 
+#define RETURN_CUSTOMIZED_ENUMERATOR(obj, argc, argv, module)                \
+    do {                                                                     \
+        if (rb_block_given_p() == FALSE)                                     \
+            return rb_custom_enumeratorize((obj), (argc), (argv), (module)); \
+    } while(0)
+
 #define DEF_ATTR_READER_STRING(c_type, prefix, field) \
     static VALUE rbpod_##prefix##_##field##_get(VALUE self) \
     { \

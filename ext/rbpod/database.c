@@ -35,26 +35,36 @@ static VALUE rbpod_database_synchronized_p(VALUE self)
 
 /*
  * call-seq:
- *     playlists() -> RbPod::PlaylistCollection
+ *     playlists() -> Enumerator
  *
- * Returns a collection of all playlists added to this database.
+ * Returns an enumerator of all playlists added to this database.
  */
 static VALUE rbpod_database_playlists_get(VALUE self)
 {
-    return rb_class_new_instance(1, &self, cRbPodPlaylistCollection);
+    Itdb_iTunesDB *database = TYPED_DATA_PTR(self, Itdb_iTunesDB);
+    GList *current = NULL;
+
+    RETURN_CUSTOMIZED_ENUMERATOR(self, 0, 0, mRbPodPlaylistCollection);
+
+    for (current = database->playlists; current != NULL; current = g_list_next(current)) {
+        VALUE playlist = rb_class_new_instance_with_data(0, NULL, cRbPodPlaylist, current->data);
+        rb_yield(playlist);
+    }
+
+    return Qnil;
 }
 
 /*
  * call-seq:
- *     tracks() -> RbPod::TrackCollection
+ *     tracks() -> Enumerator
  *
- * Returns a collection of all tracks added to this database.
+ * Returns an enumerator of all tracks added to this database.
  */
 static VALUE rbpod_database_tracks_get(VALUE self)
 {
-    VALUE playlists = rbpod_database_playlists_get(self);
-    VALUE master = rb_funcall(playlists, rb_intern("master"), 0);
-    return rb_class_new_instance(1, &master, cRbPodTrackCollection);
+    VALUE known_playlists = rbpod_database_playlists_get(self);
+    VALUE master_playlist = rb_funcall(known_playlists, rb_intern("master"), 0);
+    return rb_funcall(master_playlist, rb_intern("tracks"), 0);
 }
 
 /*

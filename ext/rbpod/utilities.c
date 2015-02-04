@@ -3,6 +3,23 @@
 #include "rbpod.h"
 
 /*
+ * Returns an enumerator with it's singleton class customized according to module.
+ */
+inline VALUE rb_custom_enumeratorize(VALUE object, VALUE argc, VALUE *argv, VALUE module)
+{
+    VALUE function   = ID2SYM(rb_frame_this_func());
+    VALUE enumerator = rb_enumeratorize(object, function, argc, argv);
+
+    /* XXX: This is evil. Don't do this. */
+    rb_iv_set(enumerator, "@parent", object);
+
+    /* Add our customizations to this enumerator. */
+    rb_extend_object(enumerator, module);
+
+    return enumerator;
+}
+
+/*
  * This is a hack used to inject a pointer from the data of one class instance into another.
  */
 inline VALUE rb_class_new_instance_with_data(int argc, VALUE *argv, VALUE class, void *handle)
@@ -14,14 +31,3 @@ inline VALUE rb_class_new_instance_with_data(int argc, VALUE *argv, VALUE class,
     /* Return the instance. */
     return instance;
 }
-
-/*
- * This is a hack so that including a module will trigger the +included+ singleton method.
- */
-inline void rb_real_include_module(VALUE klass, VALUE module)
-{
-    ID included = rb_intern("included");
-    rb_include_module(klass, module);
-    rb_funcall(mRbPodCollection, included, 1, klass);
-}
-

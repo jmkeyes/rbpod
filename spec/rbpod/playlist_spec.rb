@@ -29,13 +29,13 @@ describe RbPod::Playlist do
     end
 
     describe '#tracks' do
-      it 'should return a collection of tracks' do
-        playlist.tracks.should be_instance_of(RbPod::TrackCollection)
+      it 'should return an Enumerator of RbPod::Track' do
+        playlist.tracks.should be_instance_of(Enumerator)
       end
 
       it 'should have zero tracks within it' do
-        playlist.tracks.size.should be_kind_of(Integer)
-        playlist.tracks.size.should eq(0)
+        playlist.tracks.count.should be_kind_of(Integer)
+        playlist.tracks.count.should eq(0)
       end
     end
 

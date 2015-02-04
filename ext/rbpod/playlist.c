@@ -80,13 +80,23 @@ static VALUE rbpod_playlist_shuffle_bang(VALUE self)
 
 /*
  * call-seq:
- *     tracks() -> RbPod::Collection
+ *     tracks() -> Enumerator
  *
- * Returns a collection of the tracks in this playlist.
+ * Returns an enumerator of the tracks in this playlist.
  */
 static VALUE rbpod_playlist_tracks_get(VALUE self)
 {
-    return rb_class_new_instance(1, &self, cRbPodTrackCollection);
+    Itdb_Playlist *playlist = TYPED_DATA_PTR(self, Itdb_Playlist);
+    GList *current = NULL;
+
+    RETURN_CUSTOMIZED_ENUMERATOR(self, 0, 0, mRbPodTrackCollection);
+
+    for (current = playlist->members; current != NULL; current = g_list_next(current)) {
+        VALUE track = rb_class_new_instance_with_data(0, NULL, cRbPodTrack, current->data);
+        rb_yield(track);
+    }
+
+    return Qnil;
 }
 
 /*

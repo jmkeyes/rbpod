@@ -8,6 +8,11 @@ puts "Taglib is not installed; ID3 tag parsing disabled." unless pkg_config('tag
 # Unfortunately, rdoc isn't capable of a lot of things.
 $defs.push("-DRDOC_CAN_PARSE_DOCUMENTATION=0")
 
+# Compile with debuging symbols if enabled.
+if enable_config('debug')
+  CONFIG['debugflags'] << ' -ggdb3 -O0'
+end
+
 # Provide HAVE_STDDEF_H to the pre-processor.
 have_header('stddef.h')
 

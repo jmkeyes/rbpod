@@ -28,8 +28,20 @@ static VALUE rbpod_load_database(VALUE self, VALUE mount_point)
     return rb_class_new_instance(1, &mount_point, cRbPodDatabase);
 }
 
+/*
+ * :nodoc:
+ */
+static void rbpod_glib_log_handler(const gchar *domain, GLogLevelFlags level, const gchar *message, gpointer userdata)
+{
+    rb_warn("DOMAIN: '%s' LEVEL: %08x MESSAGE: '%s' DATA: %p", domain, level, message, userdata);
+    return;
+}
+
 void Init_rbpod(void)
 {
+    /* Setup a GLib log handler for all warning messages. */
+    g_log_set_default_handler(&rbpod_glib_log_handler, NULL);
+
     /* This is the wrapper for all RbPod related classes. */
     mRbPod = rb_define_module("RbPod");
 

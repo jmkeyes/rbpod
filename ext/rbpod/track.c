@@ -98,8 +98,9 @@ static VALUE rbpod_track_ipod_path_get(VALUE self)
     Itdb_Track *track = TYPED_DATA_PTR(self, Itdb_Track);
     gchar *buffer = NULL;
 
-    if (track->ipod_path == NULL)
+    if (track->ipod_path == NULL) {
         return Qnil;
+    }
 
     buffer = g_strdup(track->ipod_path);
 
@@ -114,8 +115,9 @@ static VALUE rbpod_track_ipod_path_set(VALUE self, VALUE value)
     gchar *new_path = StringValueCStr(value);
     gchar *buffer = NULL;
 
-    if (track->ipod_path != NULL)
+    if (track->ipod_path != NULL) {
         g_free(track->ipod_path);
+    }
 
     buffer = g_strdup(new_path);
 
@@ -131,24 +133,24 @@ static VALUE rbpod_track_mediatype_get(VALUE self)
     Itdb_Track *track = TYPED_DATA_PTR(self, Itdb_Track);
 
     switch(track->mediatype) {
-        case MEDIA_TYPE_AUDIO_VIDEO:
-            return rb_const_get(cRbPodTrack, sMEDIA_TYPE_AUDIO_VIDEO);
-        case MEDIA_TYPE_AUDIO:
-            return rb_const_get(cRbPodTrack, sMEDIA_TYPE_AUDIO);
-        case MEDIA_TYPE_VIDEO:
-            return rb_const_get(cRbPodTrack, sMEDIA_TYPE_VIDEO);
-        case MEDIA_TYPE_PODCAST:
-            return rb_const_get(cRbPodTrack, sMEDIA_TYPE_PODCAST);
-        case MEDIA_TYPE_VIDEO_PODCAST:
-            return rb_const_get(cRbPodTrack, sMEDIA_TYPE_VIDEO_PODCAST);
-        case MEDIA_TYPE_AUDIO_BOOK:
-            return rb_const_get(cRbPodTrack, sMEDIA_TYPE_AUDIO_BOOK);
-        case MEDIA_TYPE_MUSIC_VIDEO:
-            return rb_const_get(cRbPodTrack, sMEDIA_TYPE_MUSIC_VIDEO);
-        case MEDIA_TYPE_TV_SHOW_EXCL:
-            return rb_const_get(cRbPodTrack, sMEDIA_TYPE_TV_SHOW_EXCL);
-        case MEDIA_TYPE_TV_SHOW:
-            return rb_const_get(cRbPodTrack, sMEDIA_TYPE_TV_SHOW);
+    case MEDIA_TYPE_AUDIO_VIDEO:
+        return rb_const_get(cRbPodTrack, sMEDIA_TYPE_AUDIO_VIDEO);
+    case MEDIA_TYPE_AUDIO:
+        return rb_const_get(cRbPodTrack, sMEDIA_TYPE_AUDIO);
+    case MEDIA_TYPE_VIDEO:
+        return rb_const_get(cRbPodTrack, sMEDIA_TYPE_VIDEO);
+    case MEDIA_TYPE_PODCAST:
+        return rb_const_get(cRbPodTrack, sMEDIA_TYPE_PODCAST);
+    case MEDIA_TYPE_VIDEO_PODCAST:
+        return rb_const_get(cRbPodTrack, sMEDIA_TYPE_VIDEO_PODCAST);
+    case MEDIA_TYPE_AUDIO_BOOK:
+        return rb_const_get(cRbPodTrack, sMEDIA_TYPE_AUDIO_BOOK);
+    case MEDIA_TYPE_MUSIC_VIDEO:
+        return rb_const_get(cRbPodTrack, sMEDIA_TYPE_MUSIC_VIDEO);
+    case MEDIA_TYPE_TV_SHOW_EXCL:
+        return rb_const_get(cRbPodTrack, sMEDIA_TYPE_TV_SHOW_EXCL);
+    case MEDIA_TYPE_TV_SHOW:
+        return rb_const_get(cRbPodTrack, sMEDIA_TYPE_TV_SHOW);
     }
 
     return Qnil;

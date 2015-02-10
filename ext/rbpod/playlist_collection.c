@@ -36,8 +36,9 @@ static VALUE rbpod_playlist_collection_master(VALUE self)
     Itdb_iTunesDB *_database = TYPED_DATA_PTR(database, Itdb_iTunesDB);
     Itdb_Playlist *_playlist = itdb_playlist_mpl(_database);
 
-    if (_playlist == NULL)
+    if (_playlist == NULL) {
         return Qnil;
+    }
 
     /* Create a new instance of the master playlist from the data provided. */
     return rb_class_new_instance_with_data(0, NULL, cRbPodPlaylist, _playlist);

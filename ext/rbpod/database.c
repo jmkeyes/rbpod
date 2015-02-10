@@ -193,9 +193,9 @@ static VALUE rbpod_database_allocate(VALUE self)
  */
 static VALUE rbpod_database_create(int argc, VALUE *argv, VALUE self)
 {
+    VALUE mount_point, device_name, model_number, regexp;
     gchar *_mount_point, *_device_name, *_model_number;
-    VALUE model_matcher, model_regexp, ignorecase;
-    VALUE mount_point, device_name, model_number;
+    const char *mregex = "(?i)^[xM]?[A-Z][0-9]{3}$";
     GError *error = NULL;
 
     if (rb_scan_args(argc, argv, "12", &mount_point, &device_name, &model_number) < 1) {
@@ -223,12 +223,11 @@ static VALUE rbpod_database_create(int argc, VALUE *argv, VALUE self)
     if (RTEST(model_number)) {
         Check_Type(model_number, T_STRING);
 
-        model_matcher = rb_str_new2("/[xM]?[A-Z][0-9]{3}/");
-        ignorecase = rb_const_get(rb_cRegexp, rb_intern("IGNORECASE"));
-        model_regexp = rb_reg_new_str(model_matcher, ignorecase);
+        /* TODO: Precompile regex at initialization. */
+        regexp  = rb_reg_new(mregex, strlen(mregex), 0);
 
-        if (RTEST(rb_reg_match(model_regexp, model_number)) == FALSE) {
-            rb_raise(eRbPodError, "Model number must be a string matching: /[xM]?[A-Z][0-9]{3}/i");
+        if (RTEST(rb_reg_match(regexp, model_number)) == FALSE) {
+            rb_raise(eRbPodError, "Model number must be a string matching: %s", mregex);
             return Qnil;
         }
     }

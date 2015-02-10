@@ -54,6 +54,7 @@ static VALUE rbpod_track_collection_insert(int argc, VALUE *argv, VALUE self)
 {
     VALUE playlist = rbpod_track_collection_playlist(self);
     Itdb_Playlist *_playlist = TYPED_DATA_PTR(playlist, Itdb_Playlist);
+    Itdb_iTunesDB *_database = _playlist->itdb;
     VALUE track = Qnil, position = Qnil;
     Itdb_Track *_track = NULL;
     gint32 _position = 0;
@@ -73,26 +74,24 @@ static VALUE rbpod_track_collection_insert(int argc, VALUE *argv, VALUE self)
         return Qnil;
     }
 
-    /* Has this track already been transferred? If so, just add it to the playlist and be done. */
-    if (_track->transferred == TRUE) {
-        itdb_playlist_add_track(_playlist, _track, _position);
-        return Qnil;
-    }
-
     /* Do we have a source path for this track? */
     if (_track->userdata != NULL && g_file_test(_track->userdata, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_SYMLINK) == FALSE) {
         rb_raise(eRbPodError, "Invalid argument: Cannot add a track without a source file.");
         return Qnil;
     }
 
+    /* If the master database does not contain this track, add it to the database. */
+    if (itdb_playlist_contains_track(itdb_playlist_mpl(_database), _track) == FALSE) {
+        itdb_track_add(_database, _track, -1);
+    }
+
+    /* Add this track to the playlist. */
     itdb_playlist_add_track(_playlist, _track, _position);
 
     /* Copy the track to the iPod. XXX: Unlock the GVL instead, stupid. */
     if (itdb_cp_track_to_ipod(_track, _track->userdata, &error) == FALSE) {
-        itdb_playlist_remove_track(_playlist, _track);
         return rbpod_raise_error(error);
     }
-
 
     return Qnil;
 }

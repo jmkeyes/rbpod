@@ -160,6 +160,8 @@ void Init_rbpod_playlist_collection(void)
 #endif
     mRbPodPlaylistCollection = rb_define_module_under(mRbPod, "PlaylistCollection");
 
+    /* TODO: Create [] accessor for itdb_playlist_by_nr() and itdb_playlist_by_name(). */
+
     rb_define_method(mRbPodPlaylistCollection, "size", rbpod_playlist_collection_size, 0);
 
     rb_define_method(mRbPodPlaylistCollection, "master", rbpod_playlist_collection_master, 0);

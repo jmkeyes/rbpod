@@ -44,6 +44,60 @@ If you'd like to create a new, blank database you can do that too:
 database = RbPod::Database.create!('/tmp/ipod-blank') # => #<RbPod::Database:0xdeadbeef>
 ```
 
+You can get direct access to the playlists on the device:
+
+```ruby
+database.playlists # => #<Enumerator: #<RbPod::Database:0xdeadbeef>:playlists>
+
+# For a list of all the names of playlists on the iPod:
+database.playlists.map(&:name) # => ["iPod", "Podcasts", "Recently Added"]
+
+# For direct access to the master playlist:
+database.playlists.master # => #<RbPod::Playlist:0xdeadbeef>
+
+# For direct access to the podcast playlist:
+database.playlists.podcast # => #<RbPod::Playlist:0xdeadbeef>
+```
+
+You can retrieve direct access to the master playlist as well:
+
+```ruby
+database.tracks # => #<Enumerator: #<RbPod::Playlist:0xdeadbeef>:tracks>
+
+# Number of tracks in the master playlist.
+database.tracks.size # => 400
+```
+
+### RbPod::Playlist
+
+All playlists support a variety of methods:
+
+```ruby
+playlist = database.playlists.master
+
+playlist.name       # => "iPod"
+playlist.length     # => 400
+playlist.created_on # => 2008-04-05 08:47:46 -0700
+
+playlist.master?  # => true
+playlist.smart?   # => false
+playlist.podcast? # => false
+
+playlist.tracks # => #<Enumerator: #<RbPod::Playlist:0xdeadbeef>:tracks>
+```
+
+### RbPod::Track
+
+```ruby
+track = database.playlists.master.tracks.first
+
+track.artist       # => "Steppenwolf"
+track.title        # => "Born To Be Wild"
+track.album        # => "All Time Greatest Hits Remastered"
+track.file_type    # => "MPEG audio file"
+track.transferred? # => true
+````
+
 ### RbPod::Device
 
 The device (if any) that backs the database can be interrogated:
@@ -69,66 +123,6 @@ device['ModelNumStr'] # => "xA978"
 device['PotsdamConf45'] = "Kilroy Was Here"
 device.save!
 ```
-
-### RbPod::PlaylistCollection
-
-You can get direct access to the playlists on the device:
-
-```ruby
-database.playlists # => #<RbPod::PlaylistCollection:0xdeadbeef>
-
-# For a list of all the names of playlists on the iPod:
-database.playlists.map(&:name) # => ["iPod", "Podcasts", "Recently Added"]
-
-# For direct access to the master playlist:
-database.playlists.master # => #<RbPod::Playlist:0xdeadbeef>
-
-# For direct access to the podcast playlist:
-database.playlists.podcast # => #<RbPod::Playlist:0xdeadbeef>
-```
-
-### RbPod::Playlist
-
-All playlists support a variety of methods:
-
-```ruby
-playlist = database.playlists.master
-
-playlist.name       # => "iPod"
-playlist.length     # => 400
-playlist.created_on # => 2008-04-05 08:47:46 -0700
-
-playlist.master?  # => true
-playlist.smart?   # => false
-playlist.podcast? # => false
-
-playlist.tracks # => #<RbPod::TrackCollection:0xdeadbeef>
-```
-### RbPod::TrackCollection
-
-All playlists contain a `tracks` method which returns an `RbPod::TrackCollection`:
-
-```ruby
-tracks = database.playlists.master.tracks
-
-tracks.playlist # => #<RbPod::Playlist:0xdeadbeef>
-tracks.length   # => 400
-
-tracks.first # => #<RbPod::Track:0xdeadbeef>
-tracks[0]    # => #<RbPod::Track:0xdeadbeef>
-```
-
-### RbPod::Track
-
-```ruby
-track = database.playlists.master.tracks.first
-
-track.artist       # => "Steppenwolf"
-track.title        # => "Born To Be Wild"
-track.album        # => "All Time Greatest Hits Remastered"
-track.file_type    # => "MPEG audio file"
-track.transferred? # => true
-````
 
 ### RbPod::Error
 

@@ -118,6 +118,31 @@ static VALUE rbpod_track_collection_remove(VALUE self, VALUE track)
     return Qnil;
 }
 
+/*
+ * call-seq:
+ *     [](position) -> RbPod::Track
+ *
+ * Returns a track by position.
+ */
+static VALUE rbpod_track_collection_lookup(VALUE self, VALUE index)
+{
+    VALUE playlist = rbpod_track_collection_playlist(self);
+    Itdb_Playlist *_playlist = TYPED_DATA_PTR(playlist, Itdb_Playlist);
+    GList *current = NULL;
+
+    if (FIXNUM_P(index) == FALSE) {
+        return Qnil;
+    }
+
+    current = g_list_nth(_playlist->members, FIX2INT(index));
+
+    if (current == NULL) {
+        return Qnil;
+    }
+
+    return rb_class_new_instance_with_data(0, NULL, cRbPodTrack, current->data);
+}
+
 void Init_rbpod_track_collection(void)
 {
 #if RDOC_CAN_PARSE_DOCUMENTATION
@@ -131,6 +156,8 @@ void Init_rbpod_track_collection(void)
 
     rb_define_method(mRbPodTrackCollection, "insert", rbpod_track_collection_insert, -1);
     rb_define_method(mRbPodTrackCollection, "remove", rbpod_track_collection_remove, 1);
+
+    rb_define_method(mRbPodTrackCollection, "[]", rbpod_track_collection_lookup, 1);
 
     /* Syntactic sugar for adding a track. */
     rb_define_alias(mRbPodTrackCollection, "<<", "insert");

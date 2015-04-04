@@ -67,13 +67,13 @@ describe RbPod::Database do
     end
 
     describe '#playlists' do
-      it 'should return an Enumerator of RbPod::Playlist' do
+      it 'should return an Enumerator' do
         database.playlists.should be_instance_of(Enumerator)
       end
     end
 
     describe '#tracks' do
-      it 'should return an Enumerator of RbPod::Track' do
+      it 'should return an Enumerator' do
         database.tracks.should be_instance_of(Enumerator)
       end
     end

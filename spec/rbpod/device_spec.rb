@@ -1,5 +1,5 @@
 describe RbPod::Device do
-  context 'On a device backed by a new database' do
+  context 'With a new database' do
     include_context 'a new database'
 
     let(:device) { database.device }

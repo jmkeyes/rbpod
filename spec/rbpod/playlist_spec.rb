@@ -1,5 +1,5 @@
 describe RbPod::Playlist do
-  context 'with a new playlist' do
+  context 'With a new playlist' do
     let (:playlist) { RbPod::Playlist.new }
 
     describe '#initialize' do
@@ -29,7 +29,7 @@ describe RbPod::Playlist do
     end
 
     describe '#tracks' do
-      it 'should return an Enumerator of RbPod::Track' do
+      it 'should return an Enumerator' do
         playlist.tracks.should be_instance_of(Enumerator)
       end
 

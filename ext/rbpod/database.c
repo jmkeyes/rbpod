@@ -17,6 +17,12 @@ static VALUE rbpod_database_save(VALUE self)
         return rbpod_raise_error(error);
     }
 
+    /* TODO: Iterate through all tracks, adding/removing from master playlist and filesystem. */
+
+    /* TODO: Iterate through playlists, save them if they've been modified. */
+
+    /* TODO: Save any modifications to the backing device. */
+
     return Qnil;
 }
 

@@ -153,14 +153,42 @@ static VALUE rbpod_playlist_collection_remove(VALUE self, VALUE playlist)
     return Qnil;
 }
 
+/*
+ * call-seq:
+ *     [](name) -> RbPod::Playlist
+ *     [](position) -> RbPod::Playlist
+ *
+ * Returns a playlist by name or by position.
+ */
+static VALUE rbpod_playlist_collection_lookup(VALUE self, VALUE index)
+{
+    VALUE database = rbpod_playlist_collection_database(self);
+    Itdb_iTunesDB *_database = TYPED_DATA_PTR(database, Itdb_iTunesDB);
+    Itdb_Playlist *_playlist = NULL;
+
+    switch(TYPE(index)) {
+        case T_FIXNUM:
+            _playlist = itdb_playlist_by_nr(_database, FIX2INT(index));
+            break;
+        case T_STRING:
+        case T_SYMBOL:
+            _playlist = itdb_playlist_by_name(_database, StringValueCStr(index));
+            break;
+    }
+
+    if (_playlist == NULL) {
+        return Qnil;
+    }
+
+    return rb_class_new_instance_with_data(0, NULL, cRbPodPlaylist, _playlist);
+}
+
 void Init_rbpod_playlist_collection(void)
 {
 #if RDOC_CAN_PARSE_DOCUMENTATION
     mRbPod = rb_define_module("RbPod");
 #endif
     mRbPodPlaylistCollection = rb_define_module_under(mRbPod, "PlaylistCollection");
-
-    /* TODO: Create [] accessor for itdb_playlist_by_nr() and itdb_playlist_by_name(). */
 
     rb_define_method(mRbPodPlaylistCollection, "size", rbpod_playlist_collection_size, 0);
 
@@ -171,6 +199,8 @@ void Init_rbpod_playlist_collection(void)
 
     rb_define_method(mRbPodPlaylistCollection, "insert", rbpod_playlist_collection_insert, -1);
     rb_define_method(mRbPodPlaylistCollection, "remove", rbpod_playlist_collection_remove, 1);
+
+    rb_define_method(mRbPodPlaylistCollection, "[]", rbpod_playlist_collection_lookup, 1);
 
     /* Syntactic sugar for adding a playlist. */
     rb_define_alias(mRbPodPlaylistCollection, "<<", "insert");

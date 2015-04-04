@@ -190,6 +190,8 @@ void Init_rbpod_playlist_collection(void)
 #endif
     mRbPodPlaylistCollection = rb_define_module_under(mRbPod, "PlaylistCollection");
 
+    rb_define_method(mRbPodPlaylistCollection, "database", rbpod_playlist_collection_database, 0);
+
     rb_define_method(mRbPodPlaylistCollection, "size", rbpod_playlist_collection_size, 0);
 
     rb_define_method(mRbPodPlaylistCollection, "master", rbpod_playlist_collection_master, 0);

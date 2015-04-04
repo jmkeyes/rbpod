@@ -150,6 +150,8 @@ void Init_rbpod_track_collection(void)
 #endif
     mRbPodTrackCollection = rb_define_module_under(mRbPod, "TrackCollection");
 
+    rb_define_method(mRbPodTrackCollection, "playlist", rbpod_track_collection_playlist, 0);
+
     rb_define_method(mRbPodTrackCollection, "size", rbpod_track_collection_size, 0);
 
     rb_define_method(mRbPodTrackCollection, "include?", rbpod_track_collection_include_p, 1);
